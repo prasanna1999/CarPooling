@@ -1,0 +1,11 @@
+C:\Users\prasanna.g\source\repos\CarPooling\CarPooling\bin\Debug\netcoreapp2.1\CarPooling.deps.json
+C:\Users\prasanna.g\source\repos\CarPooling\CarPooling\bin\Debug\netcoreapp2.1\CarPooling.runtimeconfig.json
+C:\Users\prasanna.g\source\repos\CarPooling\CarPooling\bin\Debug\netcoreapp2.1\CarPooling.runtimeconfig.dev.json
+C:\Users\prasanna.g\source\repos\CarPooling\CarPooling\bin\Debug\netcoreapp2.1\CarPooling.dll
+C:\Users\prasanna.g\source\repos\CarPooling\CarPooling\bin\Debug\netcoreapp2.1\CarPooling.pdb
+C:\Users\prasanna.g\source\repos\CarPooling\CarPooling\obj\Debug\netcoreapp2.1\CarPooling.csprojAssemblyReference.cache
+C:\Users\prasanna.g\source\repos\CarPooling\CarPooling\obj\Debug\netcoreapp2.1\CarPooling.csproj.CoreCompileInputs.cache
+C:\Users\prasanna.g\source\repos\CarPooling\CarPooling\obj\Debug\netcoreapp2.1\CarPooling.AssemblyInfoInputs.cache
+C:\Users\prasanna.g\source\repos\CarPooling\CarPooling\obj\Debug\netcoreapp2.1\CarPooling.AssemblyInfo.cs
+C:\Users\prasanna.g\source\repos\CarPooling\CarPooling\obj\Debug\netcoreapp2.1\CarPooling.dll
+C:\Users\prasanna.g\source\repos\CarPooling\CarPooling\obj\Debug\netcoreapp2.1\CarPooling.pdb
