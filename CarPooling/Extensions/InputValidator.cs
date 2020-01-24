@@ -48,7 +48,7 @@ namespace CarPooling.Extensions
         {
             if (password.Length < 4)
             {
-                Console.WriteLine("Please enter name with minimum 3 characters..");
+                Console.WriteLine("Please enter password with minimum 4 characters..");
                 return true;
             }
             return false;

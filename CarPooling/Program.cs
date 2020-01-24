@@ -99,6 +99,7 @@ namespace CarPooling
                     if (choise == "y")
                     {
                         InitialSelection();
+                        return;
                     }
                     else
                     {
@@ -196,6 +197,8 @@ namespace CarPooling
             do
             {
                 type = InputHandler.GetInt();
+                if (type != 1 && type != 2)
+                    Console.WriteLine("Please enter 1 or 2");
             } while (type != 1 && type != 2);
             Vehicle vehicle;
             if (user.Vehicles.Count == 0)
@@ -221,6 +224,20 @@ namespace CarPooling
                     vehicle = AddVehicle(user);
                 }
             }
+            Console.WriteLine("Do you want to enter via points? If yes type 'y' else press any key");
+            string choise = InputHandler.GetString();
+            List<string> viaPoints = new List<string>();
+            if (choise == "y")
+            {
+                string viaPoint;
+                do
+                {
+                    Console.WriteLine("Enter Number of via points");
+                    viaPoint = InputHandler.GetString();
+                    if (viaPoint == "") break;
+                    viaPoints.Add(viaPoint);
+                } while (viaPoints.Count<8);
+            }
             Ride ride = new Ride
             {
                 From = from,
@@ -231,7 +248,8 @@ namespace CarPooling
                 NoOfVacentSeats = noOfVacentSeats,
                 UserId = user.Id,
                 Type = (BookingType)type,
-                Id = user.Id + from + to + date.Date.ToString("d")
+                Id = user.Id + from + to + date.Date.ToString("d"),
+                ViaPoints=viaPoints
             };
             rideService.OfferRide(ride, user);
             Console.WriteLine("Ride added successfully");
@@ -304,7 +322,7 @@ namespace CarPooling
             {
                 date = InputHandler.GetDate();
             } while (InputValidator.ValidateDate(date));
-            Console.WriteLine("Enter No of Paasengers");
+            Console.WriteLine("Enter No of Pasengers");
             noOfPassengers = InputHandler.GetInt();
             List<Ride> rides = CarPooling.FindRide(source, destination, date, noOfPassengers);
             if (rides.Count == 0)

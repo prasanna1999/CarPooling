@@ -27,6 +27,8 @@ namespace CarPooling.Concerns
 
         public int NoOfVacentSeats { get; set; }
 
+        public List<string> ViaPoints { get; set; }
+
         public DateTime Date { get; set; }
 
         public DateTime Time { get; set; }
