@@ -29,10 +29,39 @@ namespace CarPooling.Providers
             return false;
         }
 
+        public bool CancelBooking(Booking booking,Ride ride)
+        {
+            if (booking.Status == BookingStatus.Cancelled)
+                return false;
+            if (booking.Status == BookingStatus.Approved)
+                ride.NoOfVacentSeats = ride.NoOfVacentSeats - booking.NoOfPersons;
+            booking.Status = BookingStatus.Cancelled;
+            return true;
+            
+        }
+
+        public bool ModifyBooking(Booking booking, int noOfPersons, Ride ride)
+        {
+            if (ride.NoOfVacentSeats + booking.NoOfPersons >= noOfPersons)
+            {
+                if(ride.Type==BookingType.AutoApproval)
+                    ride.NoOfVacentSeats = ride.NoOfVacentSeats + booking.NoOfPersons - noOfPersons;
+                else
+                {
+                    booking.Status = BookingStatus.Pending;
+                }
+                booking.NoOfPersons = noOfPersons;
+                return true;
+            }
+            return false;
+        }
+
         public List<Booking> ViewBookings(User user)
         {
             List<Booking> bookings = user.Bookings;
             return bookings;
         }
+
+        
     }
 }

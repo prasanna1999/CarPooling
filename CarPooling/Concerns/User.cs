@@ -11,6 +11,8 @@ namespace CarPooling.Concerns
             Rides = new List<Ride>();
 
             Bookings = new List<Booking>();
+
+            Vehicles = new List<Vehicle>();
         }
         public string Id { get; set; }
 
@@ -25,5 +27,7 @@ namespace CarPooling.Concerns
         public List<Ride> Rides { get; set; }
 
         public List<Booking> Bookings { get; set; }
+
+        public List<Vehicle> Vehicles { get; set; }
     }
 }

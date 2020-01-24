@@ -35,6 +35,8 @@ namespace CarPooling.Concerns
 
         public RideStatus Status { get; set; }
 
+        public Vehicle Vehicle { get; set; }
+
         public List<Booking> Bookings { get; set; }
     }
 }

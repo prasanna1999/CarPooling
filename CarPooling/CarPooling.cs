@@ -27,13 +27,26 @@ namespace CarPooling
             {
                 foreach(Ride ride in user.Rides)
                 {
-                    if(ride.From==source && ride.To==destination && ride.Date.Date==date.Date && ride.Date.TimeOfDay > date.TimeOfDay && ride.NoOfVacentSeats>=noOfPassengers && ride.Status==RideStatus.NotYetStarted)
+                    if(ride.From==source && ride.To==destination && ride.Date.Date==date.Date && ride.Date.TimeOfDay >= date.TimeOfDay && ride.NoOfVacentSeats>=noOfPassengers && ride.Status==RideStatus.NotYetStarted)
                     {
                         rides.Add(ride);
                     }
                 }
             }
             return rides;
+        }
+
+        public Ride GetRide(string rideId)
+        {
+            foreach(User user in users)
+            {
+                foreach(Ride ride in user.Rides)
+                {
+                    if (ride.Id == rideId)
+                        return ride;
+                }
+            }
+            return null;
         }
     }
 }

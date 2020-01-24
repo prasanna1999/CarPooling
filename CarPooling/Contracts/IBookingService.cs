@@ -10,5 +10,9 @@ namespace CarPooling.Contracts
         bool AddBooking(Ride ride,User user,Booking booking);
 
         List<Booking> ViewBookings(User user);
+
+        bool CancelBooking(Booking booking,Ride ride);
+
+        bool ModifyBooking(Booking booking, int noOfPersons, Ride ride);
     }
 }
