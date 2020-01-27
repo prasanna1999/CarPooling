@@ -6,7 +6,7 @@ using System.Text;
 
 namespace CarPooling.Providers
 {
-    class RideService : IRideService
+    public class RideService : IRideService
     {
         public void OfferRide(Ride ride, User user)
         {

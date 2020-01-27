@@ -5,4 +5,10 @@
     <TargetFramework>netcoreapp2.1</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\CarPooling.Concerns\CarPooling.Concerns.csproj" />
+    <ProjectReference Include="..\Carpooling.Contracts\Carpooling.Contracts.csproj" />
+    <ProjectReference Include="..\CarPooling.Providers\CarPooling.Providers.csproj" />
+  </ItemGroup>
+
 </Project>
