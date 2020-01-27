@@ -6,7 +6,7 @@ using System.Text;
 
 namespace CarPooling.Providers
 {
-    class UserValidator : IUserValidator
+    public class UserValidator : IUserValidator
     {
         public bool ValidateUserCredentials(User user, string password)
         {

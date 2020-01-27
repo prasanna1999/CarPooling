@@ -5,7 +5,7 @@ using System.Text;
 
 namespace CarPooling.Contracts
 {
-    interface IRideService
+    public interface IRideService
     {
         List<Ride> ViewRides(User user);
 

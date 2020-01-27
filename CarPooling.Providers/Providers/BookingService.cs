@@ -8,7 +8,6 @@ namespace CarPooling.Providers
 {
     public class BookingService : IBookingService
     {
-
         public bool AddBooking(Ride ride, User user, Booking booking)
         {
             if (ride.UserId != booking.UserId)

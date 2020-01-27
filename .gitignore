@@ -5,3 +5,9 @@
 /.vs
 /CarPooling/bin
 /CarPooling/obj
+/CarPooling.Concerns/bin
+/CarPooling.Concerns/obj
+/Carpooling.Contracts/bin
+/Carpooling.Contracts/obj
+/CarPooling.Providers/bin
+/CarPooling.Providers/obj
