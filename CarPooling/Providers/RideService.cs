@@ -18,8 +18,10 @@ namespace CarPooling.Providers
             return user.Rides;
         }
 
-        public void ModifyRide(Ride ride, User user, int choise,int value)
+        public bool ModifyRide(Ride ride, User user, int choise,int value)
         {
+            if (ride.Status != RideStatus.NotYetStarted)
+                return false;
             if (choise == 1)
             {
                 ride.Price = value;
@@ -28,15 +30,19 @@ namespace CarPooling.Providers
             {
                 ride.NoOfVacentSeats = value;
             }
+            return true;
         }
 
-        public void CancelRide(Ride ride, User user)
+        public bool CancelRide(Ride ride, User user)
         {
+            if (ride.Status != RideStatus.NotYetStarted)
+                return false;
             ride.Status = RideStatus.Cancelled;
             for(int i = 0; i < ride.Bookings.Count; i++)
             {
                 ride.Bookings[i].Status = BookingStatus.Cancelled;
             }
+            return true;
         }
 
         public List<Booking> ViewRideBookings(Ride ride)
@@ -54,6 +60,14 @@ namespace CarPooling.Providers
             }
             else
                 return false;
+        }
+
+        public void ChangeRideStatus(Ride ride)
+        {
+            if (ride.Date < DateTime.Now && ride.Status==RideStatus.NotYetStarted)
+            {
+                ride.Status = RideStatus.Completed;
+            }
         }
     }
 }

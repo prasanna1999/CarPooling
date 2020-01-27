@@ -42,7 +42,7 @@ namespace CarPooling.Providers
 
         public bool ModifyBooking(Booking booking, int noOfPersons, Ride ride)
         {
-            if (ride.NoOfVacentSeats + booking.NoOfPersons >= noOfPersons)
+            if (ride.NoOfVacentSeats + booking.NoOfPersons >= noOfPersons && booking.Status==BookingStatus.Approved)
             {
                 if(ride.Type==BookingType.AutoApproval)
                     ride.NoOfVacentSeats = ride.NoOfVacentSeats + booking.NoOfPersons - noOfPersons;
@@ -52,6 +52,15 @@ namespace CarPooling.Providers
                 }
                 booking.NoOfPersons = noOfPersons;
                 return true;
+            }
+            else if(booking.Status==BookingStatus.Pending)
+            {
+                if (ride.NoOfVacentSeats >= noOfPersons)
+                {
+                    booking.Status = BookingStatus.Pending;
+                    booking.NoOfPersons = noOfPersons;
+                    return true;
+                }
             }
             return false;
         }
