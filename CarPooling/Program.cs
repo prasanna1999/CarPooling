@@ -223,7 +223,7 @@ namespace CarPooling
                 int i = 1;
                 foreach (Vehicle vehi in user.Vehicles)
                 {
-                    Console.WriteLine(i + ". Vehicle Model:" + vehi.Model + " Vehicle Number:" + vehi.CarNumber);
+                    Console.WriteLine(i + ".\t Vehicle Model:" + vehi.Model + "\t Vehicle Number:" + vehi.CarNumber);
                     i++;
                 }
                 Console.WriteLine("Select a vehicle mentioned above or press another number to add new vehicle");
@@ -293,13 +293,17 @@ namespace CarPooling
             List<Ride> rides = rideService.ViewRides(user);
             if (rides.Count > 0)
             {
+                Console.WriteLine("--------------------------------------------------------------------------");
+                Console.WriteLine("No\t|From\t|To  \t|Date\t\t\t|Price\t|Status");
+                Console.WriteLine("--------------------------------------------------------------------------");
                 int i = 1;
                 foreach (Ride ride in rides)
                 {
                     rideService.ChangeRideStatus(ride);
-                    Console.WriteLine(i + ". From: " + ride.From + ", To: " + ride.To + ", Date: " + ride.Date + ", Price: " + ride.Price + ", Status: " + ride.Status);
+                    Console.WriteLine(i+ "\t|"+ride.From+"\t|" + ride.To +"\t|" + ride.Date +"\t|" + ride.Price + "\t|" + ride.Status);
                     i++;
                 }
+                Console.WriteLine("--------------------------------------------------------------------------");
                 Console.WriteLine("Select ride which you want to view. Select another number to exit");
                 int select;
                 select = InputHandler.GetInt();
@@ -344,12 +348,15 @@ namespace CarPooling
             else
             {
                 int i = 1, num;
+                Console.WriteLine("---------------------------------------------------------------");
+                Console.WriteLine("No\t|From\t|To  \t|Date\t\t\t|Price");
+                Console.WriteLine("---------------------------------------------------------------");
                 foreach (Ride ride in rides)
                 {
-                    Console.WriteLine(i + "." + " From: " + ride.From + ", To: " + ride.To + ", Date: " + ride.Date + ", Price:" + ride.Price);
-                    Console.WriteLine(i + "." + " From: " + ride.From + ", To: " + ride.To + ", Date: " + ride.Date + ", Price:" + ride.Price);
+                    Console.WriteLine(i + "\t|" + ride.From + "\t|" + ride.To + "\t|" + ride.Date + "\t|" + ride.Price + "\t");
                     i++;
                 }
+                Console.WriteLine("---------------------------------------------------------------");
                 Console.WriteLine("Do you want to book a car? Type 'y' to proceed otherwise press any key to exit");
                 string choise = InputHandler.GetString().ToLower();
                 if (choise == "y")
@@ -398,7 +405,7 @@ namespace CarPooling
             {
                 foreach (Booking booking in bookings)
                 {
-                    Console.WriteLine("From: " + booking.From + ", To: " + booking.To + ", Date: " + booking.Date + " No of seats: " + booking.NoOfPersons + ", Approval Status: " + booking.Status);
+                    Console.WriteLine("From: " + booking.From + ",\nTo: " + booking.To + ",\nDate: " + booking.Date + ",\nNo of seats: " + booking.NoOfPersons + ",\nApproval Status: " + booking.Status);
                     if (booking.Date < DateTime.Now)
                     {
                         Console.WriteLine("Ride already finished");
@@ -417,7 +424,7 @@ namespace CarPooling
 
         void ViewRide(Ride ride, User user)
         {
-            Console.WriteLine("From: " + ride.From + ", To: " + ride.To + ", Date: " + ride.Date + ", Price: " + ride.Price);
+            Console.WriteLine("From: " + ride.From + ",\nTo: " + ride.To + ",\nDate: " + ride.Date + ",\nPrice: " + ride.Price);
             if (ride.Status == RideStatus.Cancelled)
             {
                 Console.WriteLine("Ride Cancelled");
@@ -429,7 +436,7 @@ namespace CarPooling
                 return;
             }
             IRideService rideService = new RideService();
-            Console.WriteLine("Select one: 1. Modify Ride 2. Cancel Ride 3. View Your Ride Bookings 4. Exit");
+            Console.WriteLine("Select one: \n1. Modify Ride \n2. Cancel Ride \n3. View Your Ride Bookings \n4. Exit");
             int choise;
             do
             {
@@ -460,7 +467,7 @@ namespace CarPooling
         void ModifyRide(Ride ride, User user)
         {
             IRideService rideService = new RideService();
-            Console.WriteLine("Choose one 1. Price 2.No Of Seats \nPress any number to exit other than above mentioned");
+            Console.WriteLine("Choose one \n1. Price \n2.No Of Seats \nPress any number to exit other than above mentioned");
             int choise = InputHandler.GetInt();
             if (choise != 1 && choise != 2)
                 return;
@@ -486,7 +493,7 @@ namespace CarPooling
             }
             foreach (Booking booking in bookings)
             {
-                Console.WriteLine("From: " + booking.From + ", To: " + booking.To + ", Date: " + booking.Date + " No of seats: " + booking.NoOfPersons + ", Approval Status: " + booking.Status);
+                Console.WriteLine("From: " + booking.From + ",\nTo: " + booking.To + ",\nDate: " + booking.Date + ",\nNo of seats: " + booking.NoOfPersons + ",\nApproval Status: " + booking.Status);
                 if (ride.Type == BookingType.ManualApproval && booking.Status == BookingStatus.Pending)
                 {
                     Console.WriteLine("Do you want to Approve this booking? If yes press y, otherwise press any key");
@@ -514,7 +521,7 @@ namespace CarPooling
                 Console.WriteLine("Ride Cancelled");
                 return;
             }
-            Console.WriteLine("Select One: 1. Modify Booking 2. Cancel Booking 3. Exit");
+            Console.WriteLine("Select One: \n1. Modify Booking \n2. Cancel Booking \n3. Exit");
             int choise;
             IBookingService bookingService = new BookingService();
             do
