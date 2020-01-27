@@ -2,9 +2,6 @@
 # This .gitignore file was automatically created by Microsoft(R) Visual Studio.
 ################################################################################
 
-/.vs/CarPooling/v15/Server/sqlite3/storage.ide-wal
-/.vs/CarPooling/v15/Server/sqlite3/storage.ide-shm
-/.vs/CarPooling/v15/Server/sqlite3/storage.ide
-/.vs/CarPooling/v15/Server/sqlite3/db.lock
 /.vs
-/CarPooling
+/CarPooling/bin
+/CarPooling/obj
