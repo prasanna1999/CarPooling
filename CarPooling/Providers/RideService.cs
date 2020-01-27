@@ -6,9 +6,9 @@ using System.Text;
 
 namespace CarPooling.Providers
 {
-    class RideService: IRideService
+    class RideService : IRideService
     {
-        public void OfferRide(Ride ride,User user)
+        public void OfferRide(Ride ride, User user)
         {
             user.Rides.Add(ride);
         }
@@ -18,7 +18,7 @@ namespace CarPooling.Providers
             return user.Rides;
         }
 
-        public bool ModifyRide(Ride ride, User user, int choise,int value)
+        public bool ModifyRide(Ride ride, User user, int choise, int value)
         {
             if (ride.Status != RideStatus.NotYetStarted)
                 return false;
@@ -38,7 +38,7 @@ namespace CarPooling.Providers
             if (ride.Status != RideStatus.NotYetStarted)
                 return false;
             ride.Status = RideStatus.Cancelled;
-            for(int i = 0; i < ride.Bookings.Count; i++)
+            for (int i = 0; i < ride.Bookings.Count; i++)
             {
                 ride.Bookings[i].Status = BookingStatus.Cancelled;
             }
@@ -50,7 +50,7 @@ namespace CarPooling.Providers
             return ride.Bookings;
         }
 
-        public bool ApproveBooking(Ride ride,Booking booking)
+        public bool ApproveBooking(Ride ride, Booking booking)
         {
             if (ride.NoOfVacentSeats >= booking.NoOfPersons)
             {
@@ -64,7 +64,7 @@ namespace CarPooling.Providers
 
         public void ChangeRideStatus(Ride ride)
         {
-            if (ride.Date < DateTime.Now && ride.Status==RideStatus.NotYetStarted)
+            if (ride.Date < DateTime.Now && ride.Status == RideStatus.NotYetStarted)
             {
                 ride.Status = RideStatus.Completed;
             }

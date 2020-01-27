@@ -11,7 +11,7 @@ namespace CarPooling.Concerns
             Bookings = new List<Booking>();
 
             Status = RideStatus.NotYetStarted;
-            
+
         }
         public string Id { get; set; }
 

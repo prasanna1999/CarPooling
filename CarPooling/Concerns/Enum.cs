@@ -14,7 +14,7 @@ namespace CarPooling.Concerns
 
     public enum BookingType
     {
-        AutoApproval=1,
+        AutoApproval = 1,
         ManualApproval
     }
 
@@ -27,14 +27,14 @@ namespace CarPooling.Concerns
 
     public enum InitialMenu
     {
-        Register=1,
+        Register = 1,
         Login,
         Exit
     }
 
     public enum UserMenu
     {
-        OfferRide=1,
+        OfferRide = 1,
         FindRide,
         ViewYourRides,
         ViewYourBookings,

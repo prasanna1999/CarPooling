@@ -6,7 +6,7 @@ using System.Text;
 
 namespace CarPooling.Providers
 {
-    public class BookingService:IBookingService
+    public class BookingService : IBookingService
     {
 
         public bool AddBooking(Ride ride, User user, Booking booking)
@@ -29,7 +29,7 @@ namespace CarPooling.Providers
             return false;
         }
 
-        public bool CancelBooking(Booking booking,Ride ride)
+        public bool CancelBooking(Booking booking, Ride ride)
         {
             if (booking.Status == BookingStatus.Cancelled)
                 return false;
@@ -37,14 +37,14 @@ namespace CarPooling.Providers
                 ride.NoOfVacentSeats = ride.NoOfVacentSeats - booking.NoOfPersons;
             booking.Status = BookingStatus.Cancelled;
             return true;
-            
+
         }
 
         public bool ModifyBooking(Booking booking, int noOfPersons, Ride ride)
         {
-            if (ride.NoOfVacentSeats + booking.NoOfPersons >= noOfPersons && booking.Status==BookingStatus.Approved)
+            if (ride.NoOfVacentSeats + booking.NoOfPersons >= noOfPersons && booking.Status == BookingStatus.Approved)
             {
-                if(ride.Type==BookingType.AutoApproval)
+                if (ride.Type == BookingType.AutoApproval)
                     ride.NoOfVacentSeats = ride.NoOfVacentSeats + booking.NoOfPersons - noOfPersons;
                 else
                 {
@@ -53,7 +53,7 @@ namespace CarPooling.Providers
                 booking.NoOfPersons = noOfPersons;
                 return true;
             }
-            else if(booking.Status==BookingStatus.Pending)
+            else if (booking.Status == BookingStatus.Pending)
             {
                 if (ride.NoOfVacentSeats >= noOfPersons)
                 {
@@ -71,6 +71,6 @@ namespace CarPooling.Providers
             return bookings;
         }
 
-        
+
     }
 }

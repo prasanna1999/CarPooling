@@ -11,13 +11,13 @@ namespace CarPooling.Contracts
 
         void OfferRide(Ride ride, User user);
 
-        bool ModifyRide(Ride ride, User user,int choise,int value);
+        bool ModifyRide(Ride ride, User user, int choise, int value);
 
         bool CancelRide(Ride ride, User user);
 
         List<Booking> ViewRideBookings(Ride ride);
 
-        bool ApproveBooking(Ride ride,Booking booking);
+        bool ApproveBooking(Ride ride, Booking booking);
 
         void ChangeRideStatus(Ride ride);
     }

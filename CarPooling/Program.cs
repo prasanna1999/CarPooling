@@ -264,7 +264,7 @@ namespace CarPooling
                 Type = (BookingType)type,
                 Id = user.Id + from + to + date.Date.ToString("d"),
                 ViaPoints = viaPoints,
-                Vehicle=vehicle
+                Vehicle = vehicle
             };
             rideService.OfferRide(ride, user);
             Console.WriteLine("Ride added successfully");
@@ -363,8 +363,8 @@ namespace CarPooling
                         UserId = user.Id,
                         From = source,
                         To = destination,
-                        Date = date,
-                        Time = date,
+                        Date = rides[num - 1].Date,
+                        Time = rides[num - 1].Date,
                         NoOfPersons = noOfPassengers,
                         RideId = rides[num - 1].Id
                     };
@@ -416,7 +416,12 @@ namespace CarPooling
         void ViewRide(Ride ride, User user)
         {
             Console.WriteLine("From: " + ride.From + ", To: " + ride.To + ", Date: " + ride.Date + ", Price: " + ride.Price);
-            if (ride.Date < DateTime.Now)
+            if (ride.Status == RideStatus.Cancelled)
+            {
+                Console.WriteLine("Ride Cancelled");
+                return;
+            }
+            else if (ride.Date < DateTime.Now)
             {
                 Console.WriteLine("Ride already finished.");
                 return;
