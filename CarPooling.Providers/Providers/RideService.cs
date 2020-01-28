@@ -64,19 +64,9 @@ namespace CarPooling.Providers
             List<Ride> availableRides = new List<Ride>();
             foreach (Ride ride in rides)
             {
-                int noOfSeats = ride.NoOfVacentSeats;
-                IBookingService bookingService = new BookingService();
-                List<Booking> bookings = bookingService.ViewRideBookings(ride);
                 int indexOfSource = ride.ViaPoints.IndexOf(source);
                 int indexOfDestination = ride.ViaPoints.IndexOf(destination);
-                foreach(Booking booking in bookings)
-                {
-                    int indexOfBookedSource = ride.ViaPoints.IndexOf(booking.From);
-                    int indexOfBookedDestination = ride.ViaPoints.IndexOf(booking.To);
-                    if ((indexOfBookedSource <= indexOfSource && indexOfBookedDestination <= indexOfSource) || (indexOfBookedSource >= indexOfDestination && indexOfBookedDestination >= indexOfDestination))
-                        continue;
-                    noOfSeats = noOfSeats - booking.NoOfPersons;
-                }
+                int noOfSeats = CheckAvailableSeats(ride, source, destination, noOfPassengers);
                 if (ride.Date.Date == date.Date && ride.Date.TimeOfDay >= date.TimeOfDay && noOfSeats >= noOfPassengers && ride.Status == RideStatus.NotYetStarted)
                 {
                     if (indexOfSource == -1 || indexOfDestination == -1)
@@ -86,6 +76,35 @@ namespace CarPooling.Providers
                 }
             }
             return availableRides;
+        }
+
+        public int CheckAvailableSeats(Ride ride, string source, string destination, int noOfPassengers)
+        {
+            int noOfSeats = ride.NoOfVacentSeats;
+            IBookingService bookingService = new BookingService();
+            List<Booking> bookings = bookingService.ViewRideBookings(ride);
+            int indexOfSource = ride.ViaPoints.IndexOf(source);
+            int indexOfDestination = ride.ViaPoints.IndexOf(destination);
+            List<int> filledSeats = new List<int>();
+            for (int i = 0; i < ride.ViaPoints.Count; i++)
+                filledSeats.Add(0);
+            foreach (Booking booking in bookings)
+            {
+                int indexOfBookedSource = ride.ViaPoints.IndexOf(booking.From);
+                int indexOfBookedDestination = ride.ViaPoints.IndexOf(booking.To);
+                for (int i = indexOfBookedSource; i < indexOfBookedDestination; i++)
+                    if(booking.Status==BookingStatus.Approved)
+                        filledSeats[i] = filledSeats[i] + booking.NoOfPersons;
+            }
+            for (int i = indexOfSource; i < indexOfDestination; i++)
+            {
+                if (ride.NoOfVacentSeats - filledSeats[i] < noOfPassengers)
+                {
+                    noOfSeats = 0;
+                    break;
+                }
+            }
+            return noOfSeats;
         }
     }
 }

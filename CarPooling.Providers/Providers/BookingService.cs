@@ -16,7 +16,7 @@ namespace CarPooling.Providers
             {
                 if (ride.Type == BookingType.AutoApproval)
                 {
-                    ride.NoOfVacentSeats = ride.NoOfVacentSeats - booking.NoOfPersons;
+                 
                     booking.Status = BookingStatus.Approved;
                 }
                 else
@@ -89,10 +89,11 @@ namespace CarPooling.Providers
 
         public bool ApproveBooking(Ride ride, Booking booking)
         {
-            if (ride.NoOfVacentSeats >= booking.NoOfPersons)
+            IRideService rideService = new RideService();
+            int noOfSeats = rideService.CheckAvailableSeats(ride,booking.From,booking.To,booking.NoOfPersons);
+            if (noOfSeats >= booking.NoOfPersons)
             {
                 booking.Status = BookingStatus.Approved;
-                ride.NoOfVacentSeats = ride.NoOfVacentSeats - booking.NoOfPersons;
                 return true;
             }
             else
