@@ -20,5 +20,7 @@ namespace CarPooling.Contracts
         bool CancelRide(Ride ride);
 
         void ChangeRideStatus(Ride ride);
+
+        int CheckAvailableSeats(Ride ride, string source, string destination, int noOfPassengers);
     }
 }
