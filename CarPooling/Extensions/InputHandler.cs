@@ -35,12 +35,12 @@ namespace CarPooling.Extensions
         public DateTime GetDate()
         {
             DateTime date;
-            while(!DateTime.TryParseExact(Console.ReadLine(),"M/d/yyyy H:mm",null,System.Globalization.DateTimeStyles.None,out date))
+            while (!DateTime.TryParseExact(Console.ReadLine(), "M/d/yyyy H:mm", null, System.Globalization.DateTimeStyles.None, out date))
             {
                 Console.WriteLine("Please enter correct date");
             }
             return date;
         }
-        
+
     }
 }

@@ -33,8 +33,9 @@ namespace CarPooling.Extensions
 
         public bool ValidateEmail(string email)
         {
-            try { 
-            MailAddress m = new MailAddress(email);
+            try
+            {
+                MailAddress m = new MailAddress(email);
                 return false;
             }
             catch
@@ -54,15 +55,34 @@ namespace CarPooling.Extensions
             return false;
         }
 
+        public bool ValidateArea(string area)
+        {
+            if (area.Length < 1)
+            {
+                Console.WriteLine("Please enter minimum 1 character");
+                return true;
+            }
+            return false;
+        }
+
         public bool ValidateDate(DateTime date)
         {
-            if(date<DateTime.Now)
+            if (date < DateTime.Now)
             {
                 Console.WriteLine("Please enter valid date");
                 return true;
             }
             return false;
         }
-        
+
+        public bool ValidateEndDate(DateTime startDate, DateTime endDate)
+        {
+            if (endDate <= startDate)
+            {
+                Console.WriteLine("Please enter valid end date");
+                return true;
+            }
+            return false;
+        }
     }
 }

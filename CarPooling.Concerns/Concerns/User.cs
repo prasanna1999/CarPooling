@@ -8,11 +8,6 @@ namespace CarPooling.Concerns
     {
         public User()
         {
-            Rides = new List<Ride>();
-
-            Bookings = new List<Booking>();
-
-            Vehicles = new List<Vehicle>();
         }
         public string Id { get; set; }
 
@@ -24,10 +19,5 @@ namespace CarPooling.Concerns
 
         public string Password { get; set; }
 
-        public List<Ride> Rides { get; set; }
-
-        public List<Booking> Bookings { get; set; }
-
-        public List<Vehicle> Vehicles { get; set; }
     }
 }

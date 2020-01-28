@@ -9,15 +9,15 @@ namespace CarPooling.Contracts
     {
         List<Ride> ViewRides(User user);
 
-        void OfferRide(Ride ride, User user);
+        Ride GetRide(string rideId);
 
-        bool ModifyRide(Ride ride, User user, int choise, int value);
+        List<Ride> FindRide(string source, string destination, DateTime date, int noOfPassengers);
 
-        bool CancelRide(Ride ride, User user);
+        void OfferRide(Ride ride);
 
-        List<Booking> ViewRideBookings(Ride ride);
+        bool ModifyRide(Ride ride, int choise, int value);
 
-        bool ApproveBooking(Ride ride, Booking booking);
+        bool CancelRide(Ride ride);
 
         void ChangeRideStatus(Ride ride);
     }
