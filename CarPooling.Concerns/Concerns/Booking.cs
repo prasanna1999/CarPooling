@@ -8,7 +8,7 @@ namespace CarPooling.Concerns
     {
         public Booking()
         {
-
+            DateCreated = DateTime.Now;
         }
         public string Id { get; set; }
 
@@ -25,6 +25,8 @@ namespace CarPooling.Concerns
         public DateTime Time { get; set; }
 
         public int NoOfPersons { get; set; }
+
+        public DateTime DateCreated { get; set; }
 
         public BookingStatus Status { get; set; }
     }

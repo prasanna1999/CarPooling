@@ -6,6 +6,8 @@ namespace CarPooling.Concerns
 {
     public class Vehicle
     {
+        public string Id { get; set; }
+
         public string UserId { get; set; }
 
         public string Model { get; set; }

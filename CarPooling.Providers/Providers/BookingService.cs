@@ -8,24 +8,36 @@ namespace CarPooling.Providers
 {
     public class BookingService : IBookingService
     {
-        public bool AddBooking(Ride ride, User user, Booking booking)
+        public static List<Booking> bookings = new List<Booking>();
+
+        public bool AddBooking(Ride ride, Booking booking)
         {
             if (ride.UserId != booking.UserId)
             {
                 if (ride.Type == BookingType.AutoApproval)
                 {
-                    booking.Status = BookingStatus.Approved;
                     ride.NoOfVacentSeats = ride.NoOfVacentSeats - booking.NoOfPersons;
+                    booking.Status = BookingStatus.Approved;
                 }
                 else
                 {
                     booking.Status = BookingStatus.Pending;
                 }
-                ride.Bookings.Add(booking);
-                user.Bookings.Add(booking);
+                bookings.Add(booking);
                 return true;
             }
             return false;
+        }
+
+        public void CancelAllRideBookings(string rideId)
+        {
+            foreach (Booking booking in bookings)
+            {
+                if (booking.RideId == rideId)
+                {
+                    booking.Status = BookingStatus.Cancelled;
+                }
+            }
         }
 
         public bool CancelBooking(Booking booking, Ride ride)
@@ -33,10 +45,11 @@ namespace CarPooling.Providers
             if (booking.Status == BookingStatus.Cancelled)
                 return false;
             if (booking.Status == BookingStatus.Approved)
-                ride.NoOfVacentSeats = ride.NoOfVacentSeats - booking.NoOfPersons;
+            {
+                ride.NoOfVacentSeats = ride.NoOfVacentSeats + booking.NoOfPersons;
+            }
             booking.Status = BookingStatus.Cancelled;
             return true;
-
         }
 
         public bool ModifyBooking(Booking booking, int noOfPersons, Ride ride)
@@ -66,10 +79,29 @@ namespace CarPooling.Providers
 
         public List<Booking> ViewBookings(User user)
         {
-            List<Booking> bookings = user.Bookings;
-            return bookings;
+            return bookings.FindAll(booking => booking.UserId == user.Id);
         }
 
+        public List<Booking> ViewRideBookings(Ride ride)
+        {
+            return bookings.FindAll(booking => booking.RideId == ride.Id);
+        }
 
+        public bool ApproveBooking(Ride ride, Booking booking)
+        {
+            if (ride.NoOfVacentSeats >= booking.NoOfPersons)
+            {
+                booking.Status = BookingStatus.Approved;
+                ride.NoOfVacentSeats = ride.NoOfVacentSeats - booking.NoOfPersons;
+                return true;
+            }
+            else
+                return false;
+        }
+
+        public void RejectBooking(Booking booking)
+        {
+            booking.Status = BookingStatus.Rejected;
+        }
     }
 }
