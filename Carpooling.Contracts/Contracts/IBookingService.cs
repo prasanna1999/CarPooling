@@ -9,7 +9,7 @@ namespace CarPooling.Contracts
     {
         bool AddBooking(Ride ride, Booking booking);
 
-        List<Booking> ViewBookings(User user);
+        List<Booking> GetBookings(User user);
 
         bool CancelBooking(Booking booking, Ride ride);
 
@@ -17,7 +17,7 @@ namespace CarPooling.Contracts
 
         bool ModifyBooking(Booking booking, int noOfPersons, Ride ride);
 
-        List<Booking> ViewRideBookings(Ride ride);
+        List<Booking> GetRideBookings(Ride ride);
 
         bool ApproveBooking(Ride ride, Booking booking);
 

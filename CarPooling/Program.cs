@@ -71,7 +71,7 @@ namespace CarPooling
             Console.WriteLine("Enter your password");
             do
             {
-                password = InputHandler.GetString();
+                password = InputHandler.GetPassword();
             } while (InputValidator.ValidatePassword(password));
             User newUser = new User
             {
@@ -82,7 +82,7 @@ namespace CarPooling
                 Id = name + email
             };
             CarPooling.AddUser(newUser);
-            Console.WriteLine("Registration Successful");
+            Console.WriteLine("\nRegistration Successful");
             user = newUser;
             do
             {
@@ -124,7 +124,7 @@ namespace CarPooling
             {
                 do
                 {
-                    password = InputHandler.GetString();
+                    password = InputHandler.GetPassword();
                 } while (InputValidator.ValidatePassword(password));
                 isValidLogin = userValidator.ValidateUserCredentials(user, password);
                 if (!isValidLogin)
@@ -142,7 +142,7 @@ namespace CarPooling
                 }
                 else
                 {
-                    Console.WriteLine("Login success");
+                    Console.WriteLine("\nLogin success");
                 }
             } while (!isValidLogin);
             do
@@ -313,7 +313,7 @@ namespace CarPooling
         void ViewRides()
         {
             IRideService rideService = new RideService();
-            List<Ride> rides = rideService.ViewRides(user);
+            List<Ride> rides = rideService.GetRides(user);
             if (rides.Count > 0)
             {
                 Console.WriteLine("--------------------------------------------------------------------------");
@@ -424,7 +424,7 @@ namespace CarPooling
         void ViewBookings()
         {
             IBookingService bookingService = new BookingService();
-            List<Booking> bookings = bookingService.ViewBookings(user);
+            List<Booking> bookings = bookingService.GetBookings(user);
             if (bookings.Count > 0)
             {
                 foreach (Booking booking in bookings)
@@ -510,7 +510,7 @@ namespace CarPooling
         void ViewRideBookings(Ride ride)
         {
             IBookingService bookingService = new BookingService();
-            List<Booking> bookings = bookingService.ViewRideBookings(ride);
+            List<Booking> bookings = bookingService.GetRideBookings(ride);
             if (bookings.Count == 0)
             {
                 Console.WriteLine("No one booked your ride yet");

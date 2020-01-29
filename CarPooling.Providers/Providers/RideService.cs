@@ -20,7 +20,7 @@ namespace CarPooling.Providers
             return rides.Find(ride => ride.Id == rideId);
         }
 
-        public List<Ride> ViewRides(User user)
+        public List<Ride> GetRides(User user)
         {
             return rides.FindAll(ride => ride.UserId == user.Id);
         }
@@ -82,7 +82,7 @@ namespace CarPooling.Providers
         {
             int noOfSeats = ride.NoOfVacentSeats;
             IBookingService bookingService = new BookingService();
-            List<Booking> bookings = bookingService.ViewRideBookings(ride);
+            List<Booking> bookings = bookingService.GetRideBookings(ride);
             int indexOfSource = ride.ViaPoints.IndexOf(source);
             int indexOfDestination = ride.ViaPoints.IndexOf(destination);
             List<int> filledSeats = new List<int>();
