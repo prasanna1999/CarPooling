@@ -93,8 +93,12 @@ namespace CarPooling.Providers
                 int indexOfBookedSource = ride.ViaPoints.IndexOf(booking.From);
                 int indexOfBookedDestination = ride.ViaPoints.IndexOf(booking.To);
                 for (int i = indexOfBookedSource; i < indexOfBookedDestination; i++)
-                    if(booking.Status==BookingStatus.Approved)
+                {
+                    if (booking.Status == BookingStatus.Approved)
+                    {
                         filledSeats[i] = filledSeats[i] + booking.NoOfPersons;
+                    }
+                }
             }
             for (int i = indexOfSource; i < indexOfDestination; i++)
             {

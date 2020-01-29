@@ -106,7 +106,7 @@ namespace CarPooling
                 user = CarPooling.GetUser(email);
                 if (user == null)
                 {
-                    Console.WriteLine("Email does not exist. Do you want to exit? Type y to exit or press any key to continue");
+                    Console.WriteLine("Email does not exist. Do you want to go to main menu? Type y to go to main menu or press any key to continue");
                     string choise = InputHandler.GetString().ToLower();
                     if (choise == "y")
                     {
@@ -129,7 +129,7 @@ namespace CarPooling
                 isValidLogin = userValidator.ValidateUserCredentials(user, password);
                 if (!isValidLogin)
                 {
-                    Console.WriteLine("Incorrect password. Do you want to exit? Type y to exit or press any key to continue");
+                    Console.WriteLine("Incorrect password. Do you want to go to main menu? Type y to go to main menu or press any key to continue");
                     string choise = InputHandler.GetString().ToLower();
                     if (choise == "y")
                     {
@@ -327,7 +327,7 @@ namespace CarPooling
                     i++;
                 }
                 Console.WriteLine("--------------------------------------------------------------------------");
-                Console.WriteLine("Select ride which you want to view. Select another number to exit");
+                Console.WriteLine("Select ride which you want to view. Select another number to go to user menu");
                 int select;
                 select = InputHandler.GetInt();
                 if (select > 0 && select <= rides.Count)
@@ -381,7 +381,7 @@ namespace CarPooling
                     i++;
                 }
                 Console.WriteLine("------------------------------------------------------------------------------------------------------------");
-                Console.WriteLine("Do you want to book a car? Type 'y' to proceed otherwise press any key to exit");
+                Console.WriteLine("Do you want to book a car? Type 'y' to proceed otherwise press any key to go to user menu");
                 string choise = InputHandler.GetString().ToLower();
                 if (choise == "y")
                 {
@@ -460,7 +460,7 @@ namespace CarPooling
                 return;
             }
             IRideService rideService = new RideService();
-            Console.WriteLine("Select one: \n1. Modify Ride \n2. Cancel Ride \n3. View Your Ride Bookings \n4. Exit");
+            Console.WriteLine("Select one: \n1. Modify Ride \n2. Cancel Ride \n3. View Your Ride Bookings \n4. Return to user menu");
             int choise;
             do
             {
@@ -491,7 +491,7 @@ namespace CarPooling
         void ModifyRide(Ride ride)
         {
             IRideService rideService = new RideService();
-            Console.WriteLine("Choose one \n1. Price \n2.No Of Seats \nPress any number to exit other than above mentioned");
+            Console.WriteLine("Choose one \n1. Price \n2.No Of Seats \nPress any number to go to user menu other than above mentioned");
             int choise = InputHandler.GetInt();
             if (choise != 1 && choise != 2)
                 return;
@@ -521,7 +521,7 @@ namespace CarPooling
                 Console.WriteLine("From: " + booking.From + ",\nTo: " + booking.To + ",\nDate: " + booking.Date + ",\nNo of seats: " + booking.NoOfPersons + ",\nApproval Status: " + booking.Status);
                 if (ride.Type == BookingType.ManualApproval && booking.Status == BookingStatus.Pending)
                 {
-                    Console.WriteLine("Select one \n1. Approve Booking\n2. Reject Booking\n3. Any number to exit");
+                    Console.WriteLine("Select one \n1. Approve Booking\n2. Reject Booking\nPress any another number to go to next booking.");
                     int choise = InputHandler.GetInt();
                     switch (choise)
                     {
@@ -555,7 +555,7 @@ namespace CarPooling
                 Console.WriteLine("Ride Cancelled");
                 return;
             }
-            Console.WriteLine("Select One: \n1. Modify Booking \n2. Cancel Booking \n3. Exit");
+            Console.WriteLine("Select One: \n1. Modify Booking \n2. Cancel Booking \n3. Go to user menu");
             int choise;
             IBookingService bookingService = new BookingService();
             do
