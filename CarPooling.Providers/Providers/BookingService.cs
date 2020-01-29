@@ -77,12 +77,12 @@ namespace CarPooling.Providers
             return false;
         }
 
-        public List<Booking> ViewBookings(User user)
+        public List<Booking> GetBookings(User user)
         {
             return bookings.FindAll(booking => booking.UserId == user.Id);
         }
 
-        public List<Booking> ViewRideBookings(Ride ride)
+        public List<Booking> GetRideBookings(Ride ride)
         {
             return bookings.FindAll(booking => booking.RideId == ride.Id);
         }

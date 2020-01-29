@@ -7,7 +7,7 @@ namespace CarPooling.Contracts
 {
     public interface IRideService
     {
-        List<Ride> ViewRides(User user);
+        List<Ride> GetRides(User user);
 
         Ride GetRide(string rideId);
 
