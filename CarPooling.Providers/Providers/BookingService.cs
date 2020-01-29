@@ -44,20 +44,20 @@ namespace CarPooling.Providers
         {
             if (booking.Status == BookingStatus.Cancelled)
                 return false;
-            if (booking.Status == BookingStatus.Approved)
-            {
-                ride.NoOfVacentSeats = ride.NoOfVacentSeats + booking.NoOfPersons;
-            }
             booking.Status = BookingStatus.Cancelled;
             return true;
         }
 
         public bool ModifyBooking(Booking booking, int noOfPersons, Ride ride)
         {
-            if (ride.NoOfVacentSeats + booking.NoOfPersons >= noOfPersons && booking.Status == BookingStatus.Approved)
+            IRideService rideService = new RideService();
+            int noOfSeats = rideService.CheckAvailableSeats(ride, booking.From, booking.To, booking.NoOfPersons);
+            if (noOfSeats + booking.NoOfPersons >= noOfPersons && booking.Status == BookingStatus.Approved)
             {
                 if (ride.Type == BookingType.AutoApproval)
-                    ride.NoOfVacentSeats = ride.NoOfVacentSeats + booking.NoOfPersons - noOfPersons;
+                { 
+                    booking.Status = BookingStatus.Approved;
+                }
                 else
                 {
                     booking.Status = BookingStatus.Pending;
@@ -67,7 +67,7 @@ namespace CarPooling.Providers
             }
             else if (booking.Status == BookingStatus.Pending)
             {
-                if (ride.NoOfVacentSeats >= noOfPersons)
+                if (noOfSeats >= noOfPersons)
                 {
                     booking.Status = BookingStatus.Pending;
                     booking.NoOfPersons = noOfPersons;

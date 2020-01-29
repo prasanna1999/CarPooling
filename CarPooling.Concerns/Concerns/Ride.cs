@@ -21,8 +21,6 @@ namespace CarPooling.Concerns
 
         public string To { get; set; }
 
-        public double Distance { get; set; }
-
         public double Price { get; set; }
 
         public int NoOfVacentSeats { get; set; }
