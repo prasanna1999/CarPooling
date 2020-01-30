@@ -1,4 +1,4 @@
-﻿using CarPooling.Concerns;
+﻿using CarPooling.DataModels;
 using CarPooling.Contracts;
 using System;
 using System.Collections.Generic;
@@ -8,16 +8,14 @@ namespace CarPooling.Providers
 {
     public class VehicleService : IVehicleService
     {
-        public static List<Vehicle> vehicles = new List<Vehicle>();
-
-        public void AddVehicle(Vehicle vehicle)
+        public void AddVehicle(Vehicle vehicle, User user)
         {
-            vehicles.Add(vehicle);
+            user.Vehicles.Add(vehicle);
         }
 
-        public List<Vehicle> GetVehicles(string userId)
+        public List<Vehicle> GetVehicles(User user)
         {
-            return vehicles.FindAll(vehicle => vehicle.UserId == userId);
+            return user.Vehicles;
         }
     }
 }

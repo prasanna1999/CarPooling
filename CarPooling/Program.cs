@@ -1,7 +1,7 @@
-﻿using CarPooling.Concerns;
-using CarPooling.Contracts;
+﻿using CarPooling.Contracts;
 using CarPooling.Extensions;
 using CarPooling.Providers;
+using CarPooling.DataModels;
 using System;
 using System.Collections.Generic;
 
@@ -225,7 +225,7 @@ namespace CarPooling
                     Console.WriteLine("Please enter 1 or 2");
             } while (type != 1 && type != 2);
             IVehicleService vehicleService = new VehicleService();
-            List<Vehicle> vehicles = vehicleService.GetVehicles(user.Id);
+            List<Vehicle> vehicles = vehicleService.GetVehicles(user);
             Vehicle vehicle;
             if (vehicles.Count == 0)
             {
@@ -296,7 +296,7 @@ namespace CarPooling
                 ViaPoints = viaPoints,
                 VehicleId = vehicle.Id
             };
-            rideService.OfferRide(ride);
+            rideService.OfferRide(ride, user);
             Console.WriteLine("Ride added successfully");
         }
 
@@ -321,7 +321,7 @@ namespace CarPooling
                 Id = user.Id + model
             };
             IVehicleService vehicleService = new VehicleService();
-            vehicleService.AddVehicle(vehicle);
+            vehicleService.AddVehicle(vehicle, user);
             return vehicle;
         }
 
@@ -332,7 +332,7 @@ namespace CarPooling
             if (rides.Count > 0)
             {
                 Console.WriteLine("--------------------------------------------------------------------------");
-                Console.WriteLine("No\t|From\t|To  \t|Date\t\t\t|Status");
+                Console.WriteLine("No\t|From\t|To  \t|Date\t\t\t|Price\t|Status");
                 Console.WriteLine("--------------------------------------------------------------------------");
                 int i = 1;
                 foreach (Ride ride in rides)
@@ -380,7 +380,7 @@ namespace CarPooling
             } while (InputValidator.ValidateDate(date));
             Console.WriteLine("Enter No of Pasengers");
             noOfPassengers = InputHandler.GetInt();
-            List<Ride> rides = rideService.FindRide(source, destination, date, noOfPassengers);
+            List<Ride> rides = CarPooling.FindRide(source, destination, date, noOfPassengers);
             if (rides.Count == 0)
             {
                 Console.WriteLine("No rides found between " + source + " and " + destination + " on " + date);
@@ -428,7 +428,7 @@ namespace CarPooling
         {
             IBookingService bookingService = new BookingService();
 
-            if (bookingService.AddBooking(ride, booking))
+            if (bookingService.AddBooking(ride, user, booking))
             {
                 Console.WriteLine("Booked car successfully");
             }
@@ -567,13 +567,13 @@ namespace CarPooling
         void ModifyBooking(Booking booking)
         {
             IRideService rideService = new RideService();
-            Ride ride = rideService.GetRide(booking.RideId);
+            Ride ride = CarPooling.GetRide(booking.RideId);
             if (ride.Status == RideStatus.Cancelled)
             {
                 Console.WriteLine("Ride Cancelled");
                 return;
             }
-            Console.WriteLine("Select One: \n1. Modify Booking \n2. Cancel Booking \n3. Go to user menu");
+            Console.WriteLine("Select One: \n1. Modify Booking \n2. Cancel Booking \n3. Press any another number to go to next booking.");
             int choise;
             IBookingService bookingService = new BookingService();
             do

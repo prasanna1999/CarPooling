@@ -6,8 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CarPooling.Concerns\CarPooling.Concerns.csproj" />
     <ProjectReference Include="..\Carpooling.Contracts\Carpooling.Contracts.csproj" />
+    <ProjectReference Include="..\CarPooling.DataModels\CarPooling.DataModels.csproj" />
     <ProjectReference Include="..\CarPooling.Providers\CarPooling.Providers.csproj" />
   </ItemGroup>
 

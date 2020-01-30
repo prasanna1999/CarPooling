@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Carpooling.Contracts\Carpooling.Contracts.csproj" />
+    <ProjectReference Include="..\CarPooling.DataModels\CarPooling.DataModels.csproj" />
   </ItemGroup>
 
 </Project>

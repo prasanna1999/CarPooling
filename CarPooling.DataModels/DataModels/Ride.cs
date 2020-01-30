@@ -2,10 +2,19 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace CarPooling.Concerns
+namespace CarPooling.DataModels
 {
     public class Ride
     {
+        public Ride()
+        {
+            Bookings = new List<Booking>();
+
+            Status = RideStatus.NotYetStarted;
+
+            DateCreated = DateTime.Now;
+        }
+
         public string Id { get; set; }
 
         public string UserId { get; set; }
@@ -26,13 +35,15 @@ namespace CarPooling.Concerns
 
         public DateTime EndDate { get; set; }
 
-        public string Type { get; set; }
+        public BookingType Type { get; set; }
 
-        public string Status { get; set; }
+        public RideStatus Status { get; set; }
 
         public string VehicleId { get; set; }
 
         public DateTime DateCreated { get; set; }
 
+        public List<Booking> Bookings { get; set; }
     }
+
 }

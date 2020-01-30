@@ -1,4 +1,4 @@
-﻿using CarPooling.Concerns;
+﻿using CarPooling.DataModels;
 using CarPooling.Contracts;
 using System;
 using System.Collections.Generic;
@@ -8,36 +8,24 @@ namespace CarPooling.Providers
 {
     public class BookingService : IBookingService
     {
-        public static List<Booking> bookings = new List<Booking>();
-
-        public bool AddBooking(Ride ride, Booking booking)
+        public bool AddBooking(Ride ride, User user, Booking booking)
         {
             if (ride.UserId != booking.UserId)
             {
                 if (ride.Type == BookingType.AutoApproval)
                 {
-                 
+
                     booking.Status = BookingStatus.Approved;
                 }
                 else
                 {
                     booking.Status = BookingStatus.Pending;
                 }
-                bookings.Add(booking);
+                ride.Bookings.Add(booking);
+                user.Bookings.Add(booking);
                 return true;
             }
             return false;
-        }
-
-        public void CancelAllRideBookings(string rideId)
-        {
-            foreach (Booking booking in bookings)
-            {
-                if (booking.RideId == rideId)
-                {
-                    booking.Status = BookingStatus.Cancelled;
-                }
-            }
         }
 
         public bool CancelBooking(Booking booking, Ride ride)
@@ -55,7 +43,7 @@ namespace CarPooling.Providers
             if (noOfSeats + booking.NoOfPersons >= noOfPersons && booking.Status == BookingStatus.Approved)
             {
                 if (ride.Type == BookingType.AutoApproval)
-                { 
+                {
                     booking.Status = BookingStatus.Approved;
                 }
                 else
@@ -79,18 +67,18 @@ namespace CarPooling.Providers
 
         public List<Booking> GetBookings(User user)
         {
-            return bookings.FindAll(booking => booking.UserId == user.Id);
+            return user.Bookings;
         }
 
         public List<Booking> GetRideBookings(Ride ride)
         {
-            return bookings.FindAll(booking => booking.RideId == ride.Id);
+            return ride.Bookings;
         }
 
         public bool ApproveBooking(Ride ride, Booking booking)
         {
             IRideService rideService = new RideService();
-            int noOfSeats = rideService.CheckAvailableSeats(ride,booking.From,booking.To,booking.NoOfPersons);
+            int noOfSeats = rideService.CheckAvailableSeats(ride, booking.From, booking.To, booking.NoOfPersons);
             if (noOfSeats >= booking.NoOfPersons)
             {
                 booking.Status = BookingStatus.Approved;
