@@ -183,7 +183,7 @@ namespace CarPooling
         {
             IRideService rideService = new RideService();
             string from, to;
-            
+
             int noOfVacantSeats, type, distance;
             DateTime date, endDate;
             Console.WriteLine("Enter your source:");
@@ -337,8 +337,9 @@ namespace CarPooling
                 int i = 1;
                 foreach (Ride ride in rides)
                 {
+                    int price = rideService.GetPrice(ride.From, ride.To, ride);
                     rideService.ChangeRideStatus(ride);
-                    Console.WriteLine(i + "\t|" + ride.From + "\t|" + ride.To + "\t|" + ride.Date + "\t|" + ride.Status);
+                    Console.WriteLine(i + "\t|" + ride.From + "\t|" + ride.To + "\t|" + ride.Date + "\t|" + price + "\t|" + ride.Status);
                     i++;
                 }
                 Console.WriteLine("--------------------------------------------------------------------------");
@@ -361,7 +362,7 @@ namespace CarPooling
             IRideService rideService = new RideService();
             string source, destination;
             DateTime date;
-            int noOfPassengers, price=0;
+            int noOfPassengers, price = 0;
             Console.WriteLine("Enter Source:");
             do
             {
@@ -388,7 +389,7 @@ namespace CarPooling
             {
                 int i = 1, num;
                 Console.WriteLine("------------------------------------------------------------------------------------------------------------");
-                Console.WriteLine("No\t|From\t|To  \t|Start Date and Time\t|End Date and Time\t|Price\t");
+                Console.WriteLine("No\t|From\t|To  \t|Start Date and Time\t|End Date and Time\t|Price Per Head\t");
                 Console.WriteLine("------------------------------------------------------------------------------------------------------------");
                 foreach (Ride ride in rides)
                 {
@@ -416,7 +417,7 @@ namespace CarPooling
                         Time = rides[num - 1].Date,
                         NoOfPersons = noOfPassengers,
                         RideId = rides[num - 1].Id,
-                        Price=price
+                        Price = price
                     };
                     BookACar(rides[num - 1], booking);
                 }
@@ -446,7 +447,7 @@ namespace CarPooling
             {
                 foreach (Booking booking in bookings)
                 {
-                    Console.WriteLine("From: " + booking.From + ",\nTo: " + booking.To + ",\nDate: " + booking.Date + ",\nNo of seats: " + booking.NoOfPersons + ",\nPrice: " + booking.Price + ",\nApproval Status: " + booking.Status);
+                    Console.WriteLine("From: " + booking.From + ",\nTo: " + booking.To + ",\nDate: " + booking.Date + ",\nNo of seats: " + booking.NoOfPersons + ",\nPrice per head: " + booking.Price + ",\nApproval Status: " + booking.Status);
                     if (booking.Date < DateTime.Now)
                     {
                         Console.WriteLine("Ride already finished");
@@ -465,7 +466,7 @@ namespace CarPooling
 
         void ViewRide(Ride ride)
         {
-            Console.WriteLine("From: " + ride.From + ",\nTo: " + ride.To + ",\nDate: " + ride.Date );
+            Console.WriteLine("From: " + ride.From + ",\nTo: " + ride.To + ",\nDate: " + ride.Date);
             if (ride.Status == RideStatus.Cancelled)
             {
                 Console.WriteLine("Ride Cancelled");
@@ -535,7 +536,7 @@ namespace CarPooling
             }
             foreach (Booking booking in bookings)
             {
-                Console.WriteLine("From: " + booking.From + ",\nTo: " + booking.To + ",\nDate: " + booking.Date + ",\nNo of seats: " + booking.NoOfPersons + ",\nApproval Status: " + booking.Status);
+                Console.WriteLine("From: " + booking.From + ",\nTo: " + booking.To + ",\nDate: " + booking.Date + ",\nNo of seats: " + booking.NoOfPersons + ",\nPrice per head: " + booking.Price + ",\nApproval Status: " + booking.Status);
                 if (ride.Type == BookingType.ManualApproval && booking.Status == BookingStatus.Pending)
                 {
                     Console.WriteLine("Select one \n1. Approve Booking\n2. Reject Booking\nPress any another number to go to next booking.");

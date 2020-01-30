@@ -52,7 +52,7 @@ namespace CarPooling.Providers
             }
         }
 
-        public int GetPrice(string source,string destination,Ride ride)
+        public int GetPrice(string source, string destination, Ride ride)
         {
             int indexOfSource = ride.ViaPoints.IndexOf(source);
             int indexOfDestination = ride.ViaPoints.IndexOf(destination);
