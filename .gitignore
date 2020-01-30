@@ -11,3 +11,5 @@
 /Carpooling.Contracts/obj
 /CarPooling.Providers/bin
 /CarPooling.Providers/obj
+/CarPooling.DataModels/bin/Debug/netstandard2.0
+/CarPooling.DataModels/obj

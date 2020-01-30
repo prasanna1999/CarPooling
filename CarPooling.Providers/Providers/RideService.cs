@@ -1,4 +1,4 @@
-﻿using CarPooling.Concerns;
+﻿using CarPooling.DataModels;
 using CarPooling.Contracts;
 using System;
 using System.Collections.Generic;
@@ -8,21 +8,14 @@ namespace CarPooling.Providers
 {
     public class RideService : IRideService
     {
-        public static List<Ride> rides = new List<Ride>();
-
-        public void OfferRide(Ride ride)
+        public void OfferRide(Ride ride, User user)
         {
-            rides.Add(ride);
-        }
-
-        public Ride GetRide(string rideId)
-        {
-            return rides.Find(ride => ride.Id == rideId);
+            user.Rides.Add(ride);
         }
 
         public List<Ride> GetRides(User user)
         {
-            return rides.FindAll(ride => ride.UserId == user.Id);
+            return user.Rides;
         }
 
         public bool ModifyRide(Ride ride, int value)
@@ -38,11 +31,12 @@ namespace CarPooling.Providers
             if (ride.Status != RideStatus.NotYetStarted)
                 return false;
             ride.Status = RideStatus.Cancelled;
-            IBookingService bookingService = new BookingService();
-            bookingService.CancelAllRideBookings(ride.Id);
+            for (int i = 0; i < ride.Bookings.Count; i++)
+            {
+                ride.Bookings[i].Status = BookingStatus.Cancelled;
+            }
             return true;
         }
-
 
         public void ChangeRideStatus(Ride ride)
         {
@@ -59,26 +53,6 @@ namespace CarPooling.Providers
             return (ride.Distances[indexOfDestination] - ride.Distances[indexOfSource]) * 3;
         }
 
-        public List<Ride> FindRide(string source, string destination, DateTime date, int noOfPassengers)
-        {
-            List<Ride> availableRides = new List<Ride>();
-            foreach (Ride ride in rides)
-            {
-                int indexOfSource = ride.ViaPoints.IndexOf(source);
-                int indexOfDestination = ride.ViaPoints.IndexOf(destination);
-                int noOfSeats = CheckAvailableSeats(ride, source, destination, noOfPassengers);
-                if (ride.Date.Date == date.Date && ride.Date.TimeOfDay >= date.TimeOfDay && noOfSeats >= noOfPassengers && ride.Status == RideStatus.NotYetStarted)
-                {
-                    if (indexOfSource == -1 || indexOfDestination == -1)
-                        break;
-                    else if (indexOfSource < indexOfDestination)
-                    {
-                        availableRides.Add(ride);
-                    }
-                }
-            }
-            return availableRides;
-        }
 
         public int CheckAvailableSeats(Ride ride, string source, string destination, int noOfPassengers)
         {

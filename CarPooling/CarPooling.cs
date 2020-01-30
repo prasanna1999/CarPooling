@@ -1,4 +1,6 @@
-﻿using CarPooling.Concerns;
+﻿using CarPooling.Contracts;
+using CarPooling.DataModels;
+using CarPooling.Providers;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -19,6 +21,44 @@ namespace CarPooling
             User user = users.Find(x => x.Email == email);
             return user;
         }
-        
+
+        public Ride GetRide(string rideId)
+        {
+            Ride ride = null;
+            users.ForEach(user =>
+            {
+                foreach (Ride _ride in user.Rides)
+                {
+                    if (_ride.Id == rideId)
+                        ride = _ride;
+                }
+            });
+            return ride;
+        }
+
+        public List<Ride> FindRide(string source, string destination, DateTime date, int noOfPassengers)
+        {
+            List<Ride> availableRides = new List<Ride>();
+            foreach (User user in users)
+            {
+                foreach (Ride ride in user.Rides)
+                {
+                    int indexOfSource = ride.ViaPoints.IndexOf(source);
+                    int indexOfDestination = ride.ViaPoints.IndexOf(destination);
+                    IRideService rideService = new RideService();
+                    int noOfSeats = rideService.CheckAvailableSeats(ride, source, destination, noOfPassengers);
+                    if (ride.Date.Date == date.Date && ride.Date.TimeOfDay >= date.TimeOfDay && noOfSeats >= noOfPassengers && ride.Status == RideStatus.NotYetStarted)
+                    {
+                        if (indexOfSource == -1 || indexOfDestination == -1)
+                            break;
+                        else if (indexOfSource < indexOfDestination)
+                        {
+                            availableRides.Add(ride);
+                        }
+                    }
+                }
+            }
+            return availableRides;
+        }
     }
 }

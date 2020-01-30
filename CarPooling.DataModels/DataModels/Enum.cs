@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace CarPooling.Concerns
+namespace CarPooling.DataModels
 {
     public enum BookingStatus
     {

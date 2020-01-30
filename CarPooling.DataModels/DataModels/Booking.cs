@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace CarPooling.Concerns
+namespace CarPooling.DataModels
 {
     public class Booking
     {
@@ -30,6 +28,6 @@ namespace CarPooling.Concerns
 
         public DateTime DateCreated { get; set; }
 
-        public string Status { get; set; }
+        public BookingStatus Status { get; set; }
     }
 }
