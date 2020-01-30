@@ -6,10 +6,6 @@ namespace CarPooling.Concerns
 {
     public class Booking
     {
-        public Booking()
-        {
-            DateCreated = DateTime.Now;
-        }
         public string Id { get; set; }
 
         public string UserId { get; set; }
