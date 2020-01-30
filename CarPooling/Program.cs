@@ -184,7 +184,7 @@ namespace CarPooling
             IRideService rideService = new RideService();
             string from, to;
 
-            int noOfVacantSeats, type, distance;
+            int noOfVacantSeats, distance;
             DateTime date, endDate;
             Console.WriteLine("Enter your source:");
             do
@@ -206,7 +206,7 @@ namespace CarPooling
             {
                 endDate = InputHandler.GetDate();
             } while (InputValidator.ValidateEndDate(date, endDate));
-            Console.WriteLine("Enter distance from source to destination");
+            Console.WriteLine("Enter distance from source to destination in Kms");
             distance = InputHandler.GetInt();
             Console.WriteLine("Enter number of vacant seats");
             do
@@ -217,13 +217,6 @@ namespace CarPooling
                     Console.WriteLine("Please enter minimum one seat");
                 }
             } while (noOfVacantSeats <= 0);
-            Console.WriteLine("1. Auto Approval or 2. Manual Approval");
-            do
-            {
-                type = InputHandler.GetInt();
-                if (type != 1 && type != 2)
-                    Console.WriteLine("Please enter 1 or 2");
-            } while (type != 1 && type != 2);
             IVehicleService vehicleService = new VehicleService();
             List<Vehicle> vehicles = vehicleService.GetVehicles(user);
             Vehicle vehicle;
@@ -267,7 +260,7 @@ namespace CarPooling
                     viaPoint = InputHandler.GetString();
                     if (viaPoint == "") break;
                     viaPoints.Add(viaPoint);
-                    Console.WriteLine("Enter distance from source to via point:");
+                    Console.WriteLine("Enter distance from source to via point in KMs:");
                     do
                     {
                         dist = InputHandler.GetInt();
@@ -291,7 +284,7 @@ namespace CarPooling
                 Distances = distances,
                 NoOfVacentSeats = noOfVacantSeats,
                 UserId = user.Id,
-                Type = (BookingType)type,
+                Type = BookingType.ManualApproval,
                 Id = user.Id + from + to + date.Date.ToString("d"),
                 ViaPoints = viaPoints,
                 VehicleId = vehicle.Id
@@ -430,7 +423,7 @@ namespace CarPooling
 
             if (bookingService.AddBooking(ride, user, booking))
             {
-                Console.WriteLine("Booked car successfully");
+                Console.WriteLine("Waiting for approval");
             }
             else
             {
