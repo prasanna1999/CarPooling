@@ -25,18 +25,11 @@ namespace CarPooling.Providers
             return rides.FindAll(ride => ride.UserId == user.Id);
         }
 
-        public bool ModifyRide(Ride ride, int choise, int value)
+        public bool ModifyRide(Ride ride, int value)
         {
             if (ride.Status != RideStatus.NotYetStarted)
                 return false;
-            if (choise == 1)
-            {
-                ride.Price = value;
-            }
-            else if (choise == 2)
-            {
-                ride.NoOfVacentSeats = value;
-            }
+            ride.NoOfVacentSeats = value;
             return true;
         }
 
@@ -59,6 +52,13 @@ namespace CarPooling.Providers
             }
         }
 
+        public int GetPrice(string source,string destination,Ride ride)
+        {
+            int indexOfSource = ride.ViaPoints.IndexOf(source);
+            int indexOfDestination = ride.ViaPoints.IndexOf(destination);
+            return (ride.Distances[indexOfDestination] - ride.Distances[indexOfSource]) * 3;
+        }
+
         public List<Ride> FindRide(string source, string destination, DateTime date, int noOfPassengers)
         {
             List<Ride> availableRides = new List<Ride>();
@@ -72,7 +72,9 @@ namespace CarPooling.Providers
                     if (indexOfSource == -1 || indexOfDestination == -1)
                         break;
                     else if (indexOfSource < indexOfDestination)
+                    {
                         availableRides.Add(ride);
+                    }
                 }
             }
             return availableRides;

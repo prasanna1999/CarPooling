@@ -24,6 +24,8 @@ namespace CarPooling.Concerns
 
         public DateTime Time { get; set; }
 
+        public double Price { get; set; }
+
         public int NoOfPersons { get; set; }
 
         public DateTime DateCreated { get; set; }

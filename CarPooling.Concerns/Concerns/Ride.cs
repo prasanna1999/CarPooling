@@ -20,12 +20,12 @@ namespace CarPooling.Concerns
         public string From { get; set; }
 
         public string To { get; set; }
-
-        public double Price { get; set; }
-
+        
         public int NoOfVacentSeats { get; set; }
 
         public List<string> ViaPoints { get; set; }
+
+        public List<int> Distances { get; set; }
 
         public DateTime Date { get; set; }
 
