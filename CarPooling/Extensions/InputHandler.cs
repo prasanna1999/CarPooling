@@ -59,10 +59,10 @@ namespace CarPooling.Extensions
             return password;
         }
 
-        public DateTime GetDate()
+        public DateTime GetDate(string dateFormat)
         {
             DateTime date;
-            while (!DateTime.TryParseExact(Console.ReadLine(), "M/d/yyyy H:mm", null, System.Globalization.DateTimeStyles.None, out date))
+            while (!DateTime.TryParseExact(Console.ReadLine(), dateFormat, null, System.Globalization.DateTimeStyles.None, out date))
             {
                 Console.WriteLine("Please enter correct date");
             }

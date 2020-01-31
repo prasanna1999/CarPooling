@@ -46,28 +46,35 @@ namespace CarPooling.Providers
             }
         }
 
-        public int GetPrice(string source, string destination, Ride ride)
+        public double GetPrice(string pickUp, string drop, Ride ride)
         {
-            int indexOfSource = ride.ViaPoints.IndexOf(source);
-            int indexOfDestination = ride.ViaPoints.IndexOf(destination);
-            return (ride.Distances[indexOfDestination] - ride.Distances[indexOfSource]) * 3;
+            List<string> viaPoints = new List<string>(ride.ViaPoints);
+            viaPoints.Insert(0, ride.From);
+            viaPoints.Add(ride.To);
+            List<int> distances = new List<int>(ride.Distances);
+            distances.Insert(0, 0);
+            distances.Add(ride.Distance);
+            int indexOfSource = viaPoints.IndexOf(pickUp);
+            int indexOfDestination = viaPoints.IndexOf(drop);
+            return (distances[indexOfDestination] - distances[indexOfSource]) * ride.Price;
         }
 
 
-        public int CheckAvailableSeats(Ride ride, string source, string destination, int noOfPassengers)
+        public int CheckAvailableSeats(Ride ride, string pickUp, string drop, int noOfPassengers)
         {
             int noOfSeats = ride.NoOfVacentSeats;
-            IBookingService bookingService = new BookingService();
-            List<Booking> bookings = bookingService.GetRideBookings(ride);
-            int indexOfSource = ride.ViaPoints.IndexOf(source);
-            int indexOfDestination = ride.ViaPoints.IndexOf(destination);
+            List<string> viaPoints = new List<string>(ride.ViaPoints);
+            viaPoints.Insert(0, ride.From);
+            viaPoints.Add(ride.To);
+            int indexOfSource = viaPoints.IndexOf(pickUp);
+            int indexOfDestination = viaPoints.IndexOf(drop);
             List<int> filledSeats = new List<int>();
-            for (int i = 0; i < ride.ViaPoints.Count; i++)
+            for (int i = 0; i < viaPoints.Count; i++)
                 filledSeats.Add(0);
-            foreach (Booking booking in bookings)
+            foreach (Booking booking in ride.Bookings)
             {
-                int indexOfBookedSource = ride.ViaPoints.IndexOf(booking.From);
-                int indexOfBookedDestination = ride.ViaPoints.IndexOf(booking.To);
+                int indexOfBookedSource = viaPoints.IndexOf(booking.From);
+                int indexOfBookedDestination = viaPoints.IndexOf(booking.To);
                 for (int i = indexOfBookedSource; i < indexOfBookedDestination; i++)
                 {
                     if (booking.Status == BookingStatus.Approved)

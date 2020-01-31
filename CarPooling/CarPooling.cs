@@ -43,8 +43,11 @@ namespace CarPooling
             {
                 foreach (Ride ride in user.Rides)
                 {
-                    int indexOfSource = ride.ViaPoints.IndexOf(source);
-                    int indexOfDestination = ride.ViaPoints.IndexOf(destination);
+                    List<string> viaPoints = new List<string>(ride.ViaPoints);
+                    viaPoints.Insert(0, ride.From);
+                    viaPoints.Add(ride.To);
+                    int indexOfSource = viaPoints.IndexOf(source);
+                    int indexOfDestination = viaPoints.IndexOf(destination);
                     IRideService rideService = new RideService();
                     int noOfSeats = rideService.CheckAvailableSeats(ride, source, destination, noOfPassengers);
                     if (ride.Date.Date == date.Date && ride.Date.TimeOfDay >= date.TimeOfDay && noOfSeats >= noOfPassengers && ride.Status == RideStatus.NotYetStarted)
