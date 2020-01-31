@@ -9,7 +9,7 @@ namespace CarPooling.Contracts
     {
         List<Ride> GetRides(User user);
 
-        int GetPrice(string source, string destination, Ride ride);
+        double GetPrice(string pickUp, string drop, Ride ride);
 
         void OfferRide(Ride ride, User user);
 
@@ -19,6 +19,6 @@ namespace CarPooling.Contracts
 
         void ChangeRideStatus(Ride ride);
 
-        int CheckAvailableSeats(Ride ride, string source, string destination, int noOfPassengers);
+        int CheckAvailableSeats(Ride ride, string pickUp, string drop, int noOfPassengers);
     }
 }

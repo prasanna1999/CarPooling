@@ -12,7 +12,8 @@ namespace CarPooling
         private static readonly CarPooling CarPooling = new CarPooling();
         private static readonly InputHandler InputHandler = new InputHandler();
         private static readonly InputValidator InputValidator = new InputValidator();
-        private static User user = new User();
+        private static User user;
+        public static string dateFormat = "MM/dd/yyyy HH:mm";
         static void Main(string[] args)
         {
             Program program = new Program();
@@ -183,31 +184,33 @@ namespace CarPooling
         {
             IRideService rideService = new RideService();
             string from, to;
-
+            double price;
             int noOfVacantSeats, distance;
             DateTime date, endDate;
             Console.WriteLine("Enter your source:");
             do
             {
                 from = InputHandler.GetString();
-            } while (InputValidator.ValidateArea(from));
+            } while (InputValidator.ValidateLength(from));
             Console.WriteLine("Enter your destination:");
             do
             {
                 to = InputHandler.GetString();
-            } while (InputValidator.ValidateArea(to));
-            Console.WriteLine("Enter date and time of journey mm/dd/yyyy hh:mm");
+            } while (InputValidator.ValidateLength(to));
+            Console.WriteLine($"Enter date and time of journey {dateFormat}");
             do
             {
-                date = InputHandler.GetDate();
-            } while (InputValidator.ValidateDate(date));
-            Console.WriteLine("Enter estimated end date and time of journey mm/dd/yyyy hh:mm");
+                date = InputHandler.GetDate(dateFormat);
+            } while (InputValidator.CompareDate(DateTime.Now, date));
+            Console.WriteLine($"Enter estimated end date and time of journey {dateFormat}");
             do
             {
-                endDate = InputHandler.GetDate();
-            } while (InputValidator.ValidateEndDate(date, endDate));
+                endDate = InputHandler.GetDate(dateFormat);
+            } while (InputValidator.CompareDate(date, endDate));
             Console.WriteLine("Enter distance from source to destination in Kms");
             distance = InputHandler.GetInt();
+            Console.WriteLine("Enter price per KM");
+            price = InputHandler.GetDouble();
             Console.WriteLine("Enter number of vacant seats");
             do
             {
@@ -226,11 +229,11 @@ namespace CarPooling
             }
             else
             {
-                int i = 1;
-                foreach (Vehicle vehi in vehicles)
+                int count = 1;
+                foreach (Vehicle _vehicle in vehicles)
                 {
-                    Console.WriteLine(i + ".\t Vehicle Model:" + vehi.Model + "\t Vehicle Number:" + vehi.CarNumber);
-                    i++;
+                    Console.WriteLine(count + ".\t Vehicle Model:" + _vehicle.Model + "\t Vehicle Number:" + _vehicle.CarNumber);
+                    count++;
                 }
                 Console.WriteLine("Select a vehicle mentioned above or press another number to add new vehicle");
                 int val = InputHandler.GetInt();
@@ -246,10 +249,7 @@ namespace CarPooling
             Console.WriteLine("Do you want to enter via points? If yes type 'y' else press any key");
             string choise = InputHandler.GetString();
             List<string> viaPoints = new List<string>();
-            List<int> distances = new List<int>
-            {
-                0
-            };
+            List<int> distances = new List<int>();
             if (choise == "y")
             {
                 string viaPoint;
@@ -265,15 +265,14 @@ namespace CarPooling
                     {
                         dist = InputHandler.GetInt();
                         if (dist <= previousDist)
+                        {
                             Console.WriteLine("Please enter correct distance");
+                        }
                     } while (dist <= previousDist);
                     previousDist = dist;
                     distances.Add(dist);
                 } while (viaPoints.Count < 8);
             }
-            distances.Add(distance);
-            viaPoints.Insert(0, from);
-            viaPoints.Add(to);
             Ride ride = new Ride
             {
                 From = from,
@@ -281,6 +280,8 @@ namespace CarPooling
                 Date = date,
                 Time = date,
                 EndDate = endDate,
+                Price = price,
+                Distance = distance,
                 Distances = distances,
                 NoOfVacentSeats = noOfVacantSeats,
                 UserId = user.Id,
@@ -300,12 +301,12 @@ namespace CarPooling
             do
             {
                 model = InputHandler.GetString();
-            } while (InputValidator.ValidateArea(model));
+            } while (InputValidator.ValidateLength(model));
             Console.WriteLine("Please enter vehicle number");
             do
             {
                 vehicleNumber = InputHandler.GetString();
-            } while (InputValidator.ValidateArea(model));
+            } while (InputValidator.ValidateLength(model));
             Vehicle vehicle = new Vehicle()
             {
                 Model = model,
@@ -330,7 +331,7 @@ namespace CarPooling
                 int i = 1;
                 foreach (Ride ride in rides)
                 {
-                    int price = rideService.GetPrice(ride.From, ride.To, ride);
+                    double price = rideService.GetPrice(ride.From, ride.To, ride);
                     rideService.ChangeRideStatus(ride);
                     Console.WriteLine(i + "\t|" + ride.From + "\t|" + ride.To + "\t|" + ride.Date + "\t|" + price + "\t|" + ride.Status);
                     i++;
@@ -355,22 +356,23 @@ namespace CarPooling
             IRideService rideService = new RideService();
             string source, destination;
             DateTime date;
-            int noOfPassengers, price = 0;
-            Console.WriteLine("Enter Source:");
+            int noOfPassengers;
+            double price = 0;
+            Console.WriteLine("Enter pick up point:");
             do
             {
                 source = InputHandler.GetString();
-            } while (InputValidator.ValidateArea(source));
-            Console.WriteLine("Enter Destination");
+            } while (InputValidator.ValidateLength(source));
+            Console.WriteLine("Enter drop point");
             do
             {
                 destination = InputHandler.GetString();
-            } while (InputValidator.ValidateArea(destination));
-            Console.WriteLine("Enter Date and Time of Journey in MM/DD/YYYY HH:MM");
+            } while (InputValidator.ValidateLength(destination));
+            Console.WriteLine($"Enter date and time of journey in {dateFormat}");
             do
             {
-                date = InputHandler.GetDate();
-            } while (InputValidator.ValidateDate(date));
+                date = InputHandler.GetDate(dateFormat);
+            } while (InputValidator.CompareDate(DateTime.Now, date));
             Console.WriteLine("Enter No of Pasengers");
             noOfPassengers = InputHandler.GetInt();
             List<Ride> rides = CarPooling.FindRide(source, destination, date, noOfPassengers);
@@ -400,19 +402,20 @@ namespace CarPooling
                         Console.WriteLine("Please select a car which you want to book");
                         num = InputHandler.GetInt();
                     } while (num > rides.Count || num <= 0);
+                    Ride ride = rides[num - 1];
                     Booking booking = new Booking()
                     {
-                        Id = rides[num - 1].Id + user.Name,
+                        Id = ride.Id + user.Name,
                         UserId = user.Id,
                         From = source,
                         To = destination,
-                        Date = rides[num - 1].Date,
-                        Time = rides[num - 1].Date,
+                        Date = ride.Date,
+                        Time = ride.Date,
                         NoOfPersons = noOfPassengers,
-                        RideId = rides[num - 1].Id,
+                        RideId = ride.Id,
                         Price = price
                     };
-                    BookACar(rides[num - 1], booking);
+                    BookACar(ride, booking);
                 }
             }
         }
@@ -450,6 +453,7 @@ namespace CarPooling
                         ModifyBooking(booking);
                     }
                 }
+                Console.WriteLine("No more bookings.");
             }
             else
             {
@@ -529,7 +533,7 @@ namespace CarPooling
             }
             foreach (Booking booking in bookings)
             {
-                Console.WriteLine("From: " + booking.From + ",\nTo: " + booking.To + ",\nDate: " + booking.Date + ",\nNo of seats: " + booking.NoOfPersons + ",\nPrice per head: " + booking.Price + ",\nApproval Status: " + booking.Status);
+                Console.WriteLine("Pick Up: " + booking.From + ",\nDrop: " + booking.To + ",\nDate: " + booking.Date + ",\nNo of seats: " + booking.NoOfPersons + ",\nPrice per head: " + booking.Price + ",\nApproval Status: " + booking.Status);
                 if (ride.Type == BookingType.ManualApproval && booking.Status == BookingStatus.Pending)
                 {
                     Console.WriteLine("Select one \n1. Approve Booking\n2. Reject Booking\nPress any another number to go to next booking.");
@@ -555,6 +559,7 @@ namespace CarPooling
                     }
                 }
             }
+            Console.WriteLine("No more bookings");
         }
 
         void ModifyBooking(Booking booking)
@@ -566,7 +571,12 @@ namespace CarPooling
                 Console.WriteLine("Ride Cancelled");
                 return;
             }
-            Console.WriteLine("Select One: \n1. Modify Booking \n2. Cancel Booking \n3. Press any another number to go to next booking.");
+            else if (booking.Status == BookingStatus.Rejected)
+            {
+                Console.WriteLine("Sorry your booking is rejected");
+                return;
+            }
+            Console.WriteLine("Select One: \n1. Modify Booking \n2. Cancel Booking \nPress any another number to go to next booking.");
             int choise;
             IBookingService bookingService = new BookingService();
             do
@@ -601,11 +611,8 @@ namespace CarPooling
                             Console.WriteLine("Booking already cancelled");
                         }
                         break;
-                    case 3:
-                        return;
                     default:
-                        Console.WriteLine("Please enter above values only");
-                        break;
+                        return;
                 }
             } while (choise != 1 && choise != 2);
         }

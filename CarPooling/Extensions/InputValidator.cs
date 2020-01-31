@@ -55,9 +55,9 @@ namespace CarPooling.Extensions
             return false;
         }
 
-        public bool ValidateArea(string area)
+        public bool ValidateLength(string value)
         {
-            if (area.Length < 1)
+            if (value.Length < 1)
             {
                 Console.WriteLine("Please enter minimum 1 character");
                 return true;
@@ -65,17 +65,7 @@ namespace CarPooling.Extensions
             return false;
         }
 
-        public bool ValidateDate(DateTime date)
-        {
-            if (date < DateTime.Now)
-            {
-                Console.WriteLine("Please enter valid date");
-                return true;
-            }
-            return false;
-        }
-
-        public bool ValidateEndDate(DateTime startDate, DateTime endDate)
+        public bool CompareDate(DateTime startDate, DateTime endDate)
         {
             if (endDate <= startDate)
             {

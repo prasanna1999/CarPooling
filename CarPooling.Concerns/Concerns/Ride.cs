@@ -14,8 +14,12 @@ namespace CarPooling.Concerns
 
         public string To { get; set; }
 
+        public int Price { get; set; }
+
+        public int Distance { get; set; }
+
         public int NoOfVacentSeats { get; set; }
-        
+
         public DateTime Date { get; set; }
 
         public DateTime Time { get; set; }
