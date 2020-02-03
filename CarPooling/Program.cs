@@ -4,6 +4,9 @@ using CarPooling.Providers;
 using CarPooling.DataModels;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
+using System.Linq;
+using AutoMapper;
 
 namespace CarPooling
 {
@@ -17,10 +20,18 @@ namespace CarPooling
         static void Main(string[] args)
         {
             Program program = new Program();
+            ConfigureProfiles();
             do
             {
                 program.InitialSelection();
             } while (true);
+        }
+
+        public static void ConfigureProfiles()
+        {
+            Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies()
+                .Where(x => x.FullName.ToLowerInvariant().StartsWith("CarPooling")).ToArray();
+            Mapper.Initialize(cfg => { cfg.AddMaps(assemblies); cfg.ValidateInlineMaps = false; });
         }
 
         public void InitialSelection()

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace CarPooling.Concerns
 {
-    class Location
+    public class Location
     {
         public string Id { get; set; }
 

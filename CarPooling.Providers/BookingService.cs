@@ -8,6 +8,7 @@ namespace CarPooling.Providers
 {
     public class BookingService : IBookingService
     {
+        readonly List<Concerns.Booking> bookings = new List<Concerns.Booking>();
         public bool AddBooking(Ride ride, User user, Booking booking)
         {
             if (ride.UserId != booking.UserId)
@@ -21,6 +22,8 @@ namespace CarPooling.Providers
                 {
                     booking.Status = BookingStatus.Pending;
                 }
+                Concerns.Booking book = booking.MapTo<Concerns.Booking>();
+                bookings.Add(book);
                 ride.Bookings.Add(booking);
                 user.Bookings.Add(booking);
                 return true;
