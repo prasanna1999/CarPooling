@@ -12,6 +12,7 @@
     <ProjectReference Include="..\CarPooling.Concerns\CarPooling.Concerns.csproj" />
     <ProjectReference Include="..\Carpooling.Contracts\Carpooling.Contracts.csproj" />
     <ProjectReference Include="..\CarPooling.DataModels\CarPooling.DataModels.csproj" />
+    <ProjectReference Include="..\Carpooling.DataStore\Carpooling.DataStore.csproj" />
   </ItemGroup>
 
 </Project>
