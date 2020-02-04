@@ -5,10 +5,10 @@ using System.Text;
 
 namespace CarPooling.Contracts
 {
-    public interface IVehicleService
+    public interface IUserService
     {
-        void AddVehicle(Vehicle vehicle);
+        void AddUser(User user);
 
-        List<Vehicle> GetVehicles(string userId);
+        User GetUser(string email);
     }
 }

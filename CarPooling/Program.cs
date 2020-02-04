@@ -59,6 +59,7 @@ namespace CarPooling
 
         public void RegisterUser()
         {
+            IUserService userService = new UserService();
             string name, phoneNumber, email, password;
             Console.WriteLine("Enter your name");
             do
@@ -77,9 +78,9 @@ namespace CarPooling
                 {
                     email = InputHandler.GetString();
                 } while (InputValidator.ValidateEmail(email));
-                if (CarPooling.GetUser(email) != null)
+                if (userService.GetUser(email) != null)
                     Console.WriteLine("Email already exists. Try another");
-            } while (CarPooling.GetUser(email) != null);
+            } while (userService.GetUser(email) != null);
             Console.WriteLine("Enter your password");
             do
             {
@@ -93,7 +94,7 @@ namespace CarPooling
                 Email = email,
                 Id = name + email
             };
-            CarPooling.AddUser(newUser);
+            userService.AddUser(newUser);
             Console.WriteLine("\nRegistration Successful");
             user = newUser;
             do
@@ -105,6 +106,7 @@ namespace CarPooling
         public void Login()
         {
             IUserValidator userValidator = new UserValidator();
+            IUserService userService = new UserService();
             string email, password;
             bool isValidLogin = false;
             Console.WriteLine("Enter your email");
@@ -115,7 +117,7 @@ namespace CarPooling
                     email = InputHandler.GetString();
                 } while (InputValidator.ValidateEmail(email));
 
-                user = CarPooling.GetUser(email);
+                user = userService.GetUser(email);
                 if (user == null)
                 {
                     Console.WriteLine("Email does not exist. Do you want to go to main menu? Type y to go to main menu or press any key to continue");
@@ -232,7 +234,7 @@ namespace CarPooling
                 }
             } while (noOfVacantSeats <= 0);
             IVehicleService vehicleService = new VehicleService();
-            List<Vehicle> vehicles = vehicleService.GetVehicles(user);
+            List<Vehicle> vehicles = vehicleService.GetVehicles(user.Id);
             Vehicle vehicle;
             if (vehicles.Count == 0)
             {
@@ -301,7 +303,7 @@ namespace CarPooling
                 ViaPoints = viaPoints,
                 VehicleId = vehicle.Id
             };
-            rideService.OfferRide(ride, user);
+            rideService.OfferRide(ride);
             Console.WriteLine("Ride added successfully");
         }
 
@@ -326,14 +328,14 @@ namespace CarPooling
                 Id = user.Id + model
             };
             IVehicleService vehicleService = new VehicleService();
-            vehicleService.AddVehicle(vehicle, user);
+            vehicleService.AddVehicle(vehicle);
             return vehicle;
         }
 
         void ViewRides()
         {
             IRideService rideService = new RideService();
-            List<Ride> rides = rideService.GetRides(user);
+            List<Ride> rides = rideService.GetRides(user.Id);
             if (rides.Count > 0)
             {
                 Console.WriteLine("--------------------------------------------------------------------------");
@@ -386,7 +388,7 @@ namespace CarPooling
             } while (InputValidator.CompareDate(DateTime.Now, date));
             Console.WriteLine("Enter No of Pasengers");
             noOfPassengers = InputHandler.GetInt();
-            List<Ride> rides = CarPooling.FindRide(source, destination, date, noOfPassengers);
+            List<Ride> rides = rideService.FindRide(source, destination, date, noOfPassengers);
             if (rides.Count == 0)
             {
                 Console.WriteLine("No rides found between " + source + " and " + destination + " on " + date);
@@ -416,7 +418,7 @@ namespace CarPooling
                     Ride ride = rides[num - 1];
                     Booking booking = new Booking()
                     {
-                        Id = ride.Id + user.Name,
+                        Id = ride.Id + user.Name + DateTime.Now,
                         UserId = user.Id,
                         From = source,
                         To = destination,
@@ -435,7 +437,7 @@ namespace CarPooling
         {
             IBookingService bookingService = new BookingService();
 
-            if (bookingService.AddBooking(ride, user, booking))
+            if (bookingService.AddBooking(ride, booking))
             {
                 Console.WriteLine("Waiting for approval");
             }
@@ -449,7 +451,7 @@ namespace CarPooling
         void ViewBookings()
         {
             IBookingService bookingService = new BookingService();
-            List<Booking> bookings = bookingService.GetBookings(user);
+            List<Booking> bookings = bookingService.GetBookings(user.Id);
             if (bookings.Count > 0)
             {
                 foreach (Booking booking in bookings)
@@ -536,20 +538,32 @@ namespace CarPooling
         void ViewRideBookings(Ride ride)
         {
             IBookingService bookingService = new BookingService();
-            List<Booking> bookings = bookingService.GetRideBookings(ride);
+            List<Booking> bookings = ride.Bookings;
             if (bookings.Count == 0)
             {
                 Console.WriteLine("No one booked your ride yet");
                 return;
             }
+            Console.WriteLine("SNO\t|Pick Up\t|Drop\t|Date\t\t|No of seats\t|Price per head\t|Approval Status");
+            Console.WriteLine("----------------------------------------------------------------------------------------------------------");
+            int count = 1;
             foreach (Booking booking in bookings)
             {
-                Console.WriteLine("Pick Up: " + booking.From + ",\nDrop: " + booking.To + ",\nDate: " + booking.Date + ",\nNo of seats: " + booking.NoOfPersons + ",\nPrice per head: " + booking.Price + ",\nApproval Status: " + booking.Status);
+                Console.WriteLine(count + "\t|" + booking.From + "\t\t|" + booking.To + "\t\t|" + booking.Date + "\t|" + booking.NoOfPersons + "\t|" + booking.Price + "\t|" + booking.Status);
+                count++;
+            }
+
+            Console.WriteLine("Select the booking you want to approve or reject. Type any other number to go to user menu");
+            int num;
+            num = InputHandler.GetInt();
+            if (num <= bookings.Count && num > 0)
+            {
+                Booking booking = bookings[num - 1];
                 if (ride.Type == BookingType.ManualApproval && booking.Status == BookingStatus.Pending)
                 {
-                    Console.WriteLine("Select one \n1. Approve Booking\n2. Reject Booking\nPress any another number to go to next booking.");
-                    int choise = InputHandler.GetInt();
-                    switch (choise)
+                    Console.WriteLine("Select one \n1. Approve Booking\n2. Reject Booking\nPress any another number to go to user menu.");
+                    int select = InputHandler.GetInt();
+                    switch (select)
                     {
                         case 1:
                             if (bookingService.ApproveBooking(ride, booking))
@@ -569,14 +583,17 @@ namespace CarPooling
                             break;
                     }
                 }
+                else
+                {
+                    Console.WriteLine("Booking already " + booking.Status);
+                }
             }
-            Console.WriteLine("No more bookings");
         }
 
         void ModifyBooking(Booking booking)
         {
             IRideService rideService = new RideService();
-            Ride ride = CarPooling.GetRide(booking.RideId);
+            Ride ride = rideService.GetRide(booking.RideId);
             if (ride.Status == RideStatus.Cancelled)
             {
                 Console.WriteLine("Ride Cancelled");
@@ -585,6 +602,11 @@ namespace CarPooling
             else if (booking.Status == BookingStatus.Rejected)
             {
                 Console.WriteLine("Sorry your booking is rejected");
+                return;
+            }
+            else if (booking.Status == BookingStatus.Cancelled)
+            {
+                Console.WriteLine("Sorry your booking is cancelled");
                 return;
             }
             Console.WriteLine("Select One: \n1. Modify Booking \n2. Cancel Booking \nPress any another number to go to next booking.");
@@ -613,7 +635,7 @@ namespace CarPooling
                         }
                         break;
                     case 2:
-                        if (bookingService.CancelBooking(booking, ride))
+                        if (bookingService.CancelBooking(booking))
                         {
                             Console.WriteLine("Cancelled successfully");
                         }
