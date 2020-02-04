@@ -10,5 +10,7 @@ namespace CarPooling.Contracts
         void AddVehicle(Vehicle vehicle);
 
         List<Vehicle> GetVehicles(string userId);
+
+        Vehicle GetVehicle(string vehicleId);
     }
 }

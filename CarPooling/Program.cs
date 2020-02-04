@@ -335,21 +335,23 @@ namespace CarPooling
         void ViewRides()
         {
             IRideService rideService = new RideService();
+            IVehicleService vehicleService = new VehicleService();
             List<Ride> rides = rideService.GetRides(user.Id);
             if (rides.Count > 0)
             {
-                Console.WriteLine("--------------------------------------------------------------------------");
-                Console.WriteLine("No\t|From\t|To  \t|Date\t\t\t|Price\t|Status");
-                Console.WriteLine("--------------------------------------------------------------------------");
+                Console.WriteLine("----------------------------------------------------------------------------------------------------");
+                Console.WriteLine("No\t|From\t|To  \t|Date\t\t\t|Price\t|Vehicle Model\t|Vehicle Number\t|Status");
+                Console.WriteLine("----------------------------------------------------------------------------------------------------");
                 int i = 1;
                 foreach (Ride ride in rides)
                 {
+                    Vehicle vehicle = vehicleService.GetVehicle(ride.VehicleId);
                     double price = rideService.GetPrice(ride.From, ride.To, ride);
                     rideService.ChangeRideStatus(ride);
-                    Console.WriteLine(i + "\t|" + ride.From + "\t|" + ride.To + "\t|" + ride.Date + "\t|" + price + "\t|" + ride.Status);
+                    Console.WriteLine(i + "\t|" + ride.From + "\t|" + ride.To + "\t|" + ride.Date + "\t|" + price + "\t|" + vehicle.Model + "\t\t|" + vehicle.CarNumber + "\t\t|" + ride.Status);
                     i++;
                 }
-                Console.WriteLine("--------------------------------------------------------------------------");
+                Console.WriteLine("-----------------------------------------------------------------------------------------------------");
                 Console.WriteLine("Select ride which you want to view. Select another number to go to user menu");
                 int select;
                 select = InputHandler.GetInt();
@@ -395,17 +397,19 @@ namespace CarPooling
             }
             else
             {
+                IVehicleService vehicleService = new VehicleService();
                 int i = 1, num;
-                Console.WriteLine("------------------------------------------------------------------------------------------------------------");
-                Console.WriteLine("No\t|From\t|To  \t|Start Date and Time\t|End Date and Time\t|Price Per Head\t");
-                Console.WriteLine("------------------------------------------------------------------------------------------------------------");
+                Console.WriteLine("----------------------------------------------------------------------------------------------------------------------------------");
+                Console.WriteLine("No\t|From\t|To  \t|Start Date and Time\t|End Date and Time\t|Vehicle Model\t|Vehicle Number\t|Price Per Head\t");
+                Console.WriteLine("----------------------------------------------------------------------------------------------------------------------------------");
                 foreach (Ride ride in rides)
                 {
+                    Vehicle vehicle = vehicleService.GetVehicle(ride.VehicleId);
                     price = rideService.GetPrice(source, destination, ride);
-                    Console.WriteLine(i + "\t|" + source + "\t|" + destination + "\t|" + ride.Date + "\t|" + ride.EndDate + "\t|" + price + "\t");
+                    Console.WriteLine(i + "\t|" + source + "\t|" + destination + "\t|" + ride.Date + "\t|" + ride.EndDate + "\t|" + vehicle.Model + "\t\t|" + vehicle.CarNumber + "\t\t|" + price + "\t");
                     i++;
                 }
-                Console.WriteLine("------------------------------------------------------------------------------------------------------------");
+                Console.WriteLine("----------------------------------------------------------------------------------------------------------------------------------");
                 Console.WriteLine("Do you want to book a car? Type 'y' to proceed otherwise press any key to go to user menu");
                 string choise = InputHandler.GetString().ToLower();
                 if (choise == "y")
