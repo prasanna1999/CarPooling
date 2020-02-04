@@ -20,5 +20,11 @@ namespace CarPooling.Providers
             List<Concerns.Vehicle> vehicles = DataStore.vehicles.FindAll(vehicle => vehicle.UserId == userId);
             return vehicles.MapCollectionTo<Concerns.Vehicle, Vehicle>();
         }
+
+        public Vehicle GetVehicle(string vehicleId)
+        {
+            Concerns.Vehicle vehicle = DataStore.vehicles.Find(x => x.Id == vehicleId);
+            return vehicle.MapTo<Vehicle>();
+        }
     }
 }
