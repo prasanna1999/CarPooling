@@ -7,15 +7,17 @@ namespace CarPooling.Contracts
 {
     public interface IBookingService
     {
-        bool AddBooking(Ride ride, User user, Booking booking);
+        bool AddBooking(Booking booking);
 
-        List<Booking> GetBookings(User user);
+        List<Booking> GetBookings(string userId);
 
-        bool CancelBooking(Booking booking, Ride ride);
+        void CancelAllRideBookings(string rideId);
+
+        bool CancelBooking(Booking booking);
 
         bool ModifyBooking(Booking booking, int noOfPersons, Ride ride);
 
-        List<Booking> GetRideBookings(Ride ride);
+        List<Booking> GetRideBookings(string rideId);
 
         bool ApproveBooking(Ride ride, Booking booking);
 

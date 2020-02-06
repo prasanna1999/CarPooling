@@ -7,8 +7,10 @@ namespace CarPooling.Contracts
 {
     public interface IVehicleService
     {
-        void AddVehicle(Vehicle vehicle, User user);
+        void AddVehicle(Vehicle vehicle);
 
-        List<Vehicle> GetVehicles(User user);
+        List<Vehicle> GetVehicles(string userId);
+
+        Vehicle GetVehicle(string vehicleId);
     }
 }

@@ -29,9 +29,7 @@ namespace CarPooling.DataModels
 
         public int NoOfVacentSeats { get; set; }
 
-        public List<string> ViaPoints { get; set; }
-
-        public List<int> Distances { get; set; }
+        public List<Location> Locations { get; set; }
 
         public DateTime Date { get; set; }
 

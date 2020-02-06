@@ -3,19 +3,37 @@ using CarPooling.Contracts;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Carpooling.DataStore;
+using System.Linq;
 
 namespace CarPooling.Providers
 {
     public class VehicleService : IVehicleService
     {
-        public void AddVehicle(Vehicle vehicle, User user)
+        public void AddVehicle(Vehicle vehicle)
         {
-            user.Vehicles.Add(vehicle);
+            Concerns.Vehicle _vehicle = vehicle.MapTo<Concerns.Vehicle>();
+            using(var db = new Concerns.CarPoolingDbContext())
+            {
+                db.Add(_vehicle);
+                db.SaveChanges();
+            }
         }
 
-        public List<Vehicle> GetVehicles(User user)
+        public List<Vehicle> GetVehicles(string userId)
         {
-            return user.Vehicles;
+            using (var db = new Concerns.CarPoolingDbContext())
+            {
+                return db.Vehicle.Where(x=>x.UserId == userId).ToList().MapCollectionTo<Concerns.Vehicle, Vehicle>();
+            }
+        }
+
+        public Vehicle GetVehicle(string vehicleId)
+        {
+            using(var db = new Concerns.CarPoolingDbContext())
+            {
+                return db.Vehicle.Find(vehicleId).MapTo<Vehicle>();
+            }
         }
     }
 }
