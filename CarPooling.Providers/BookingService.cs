@@ -4,39 +4,41 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Carpooling.DataStore;
+using System.Linq;
 
 namespace CarPooling.Providers
 {
     public class BookingService : IBookingService
     {
-        public bool AddBooking(Ride ride, Booking booking)
+        public bool AddBooking(Booking booking)
         {
-            if (ride.UserId != booking.UserId)
+            Ride ride;
+            using (var db = new Concerns.CarPoolingDbContext())
             {
-                if (ride.Type == BookingType.AutoApproval)
-                {
-
-                    booking.Status = BookingStatus.Approved;
-                }
-                else
-                {
-                    booking.Status = BookingStatus.Pending;
-                }
-                Concerns.Booking _booking = booking.MapTo<Concerns.Booking>();
-                DataStore.bookings.Add(_booking);
-                return true;
+                ride = db.Ride.Find(booking.RideId).MapTo<Ride>();
             }
-            return false;
+
+            Concerns.Booking _booking = booking.MapTo<Concerns.Booking>();
+            using (var db = new Concerns.CarPoolingDbContext())
+            {
+                db.Add(_booking);
+                db.SaveChanges();
+            }
+            return true;
         }
 
         public void CancelAllRideBookings(string rideId)
         {
-            foreach (Concerns.Booking booking in DataStore.bookings)
+            using (var db = new Concerns.CarPoolingDbContext())
             {
-                if (booking.RideId == rideId)
+                foreach (Concerns.Booking booking in db.Booking)
                 {
-                    booking.Status = "Cancelled";
+                    if (booking.RideId == rideId)
+                    {
+                        booking.Status = "Cancelled";
+                    }
                 }
+                db.SaveChanges();
             }
         }
 
@@ -44,53 +46,63 @@ namespace CarPooling.Providers
         {
             if (booking.Status == BookingStatus.Cancelled)
                 return false;
-            Concerns.Booking _booking = booking.MapTo<Concerns.Booking>();
-            int index = DataStore.bookings.FindIndex(x => x.Id == _booking.Id);
-            DataStore.bookings[index].Status = "Cancelled";
+            using (var db = new Concerns.CarPoolingDbContext())
+            {
+                Concerns.Booking _booking = db.Booking.Find(booking.Id);
+                _booking.Status = "Cancelled";
+                db.SaveChanges();
+            }
             return true;
         }
 
         public bool ModifyBooking(Booking booking, int noOfPersons, Ride ride)
         {
-            Concerns.Booking _booking = booking.MapTo<Concerns.Booking>();
-            int index = DataStore.bookings.FindIndex(x => x.Id == _booking.Id);
-            IRideService rideService = new RideService();
-            int noOfSeats = rideService.CheckAvailableSeats(ride, booking.From, booking.To, booking.NoOfPersons);
-            if (noOfSeats + booking.NoOfPersons >= noOfPersons && booking.Status == BookingStatus.Approved)
+            using (var db = new Concerns.CarPoolingDbContext())
             {
-                if (ride.Type == BookingType.AutoApproval)
+                Concerns.Booking _booking = db.Booking.Find(booking.Id);
+                IRideService rideService = new RideService();
+                int noOfSeats = rideService.CheckAvailableSeats(ride, booking.From, booking.To, booking.NoOfPersons);
+                if (noOfSeats + booking.NoOfPersons >= noOfPersons && booking.Status == BookingStatus.Approved)
                 {
-                    DataStore.bookings[index].Status = "Approved";
-                }
-                else
-                {
-                    DataStore.bookings[index].Status = "Pending";
-                }
-                DataStore.bookings[index].NoOfPersons = noOfPersons;
-                return true;
-            }
-            else if (booking.Status == BookingStatus.Pending)
-            {
-                if (noOfSeats >= noOfPersons)
-                {
-                    DataStore.bookings[index].Status = "Pending";
-                    DataStore.bookings[index].NoOfPersons = noOfPersons;
+                    if (ride.Type == BookingType.AutoApproval)
+                    {
+                        _booking.Status = "Approved";
+                    }
+                    else
+                    {
+                        _booking.Status = "Pending";
+                    }
+                    _booking.NoOfPersons = noOfPersons;
                     return true;
                 }
+                else if (booking.Status == BookingStatus.Pending)
+                {
+                    if (noOfSeats >= noOfPersons)
+                    {
+                        _booking.Status = "Pending";
+                        _booking.NoOfPersons = noOfPersons;
+                        return true;
+                    }
+                }
+                db.SaveChanges();
             }
             return false;
         }
 
         public List<Booking> GetBookings(string userId)
         {
-            List<Concerns.Booking> bookings = DataStore.bookings.FindAll(booking => booking.UserId == userId);
-            return bookings.MapCollectionTo<Concerns.Booking, Booking>();
+            using (var db = new Concerns.CarPoolingDbContext())
+            {
+                return db.Booking.Where(x => x.UserId == userId).ToList().MapCollectionTo<Concerns.Booking, Booking>();
+            }
         }
 
         public List<Booking> GetRideBookings(string rideId)
         {
-            List<Concerns.Booking> bookings = DataStore.bookings.FindAll(booking => booking.RideId == rideId);
-            return bookings.MapCollectionTo<Concerns.Booking, Booking>();
+            using (var db = new Concerns.CarPoolingDbContext())
+            {
+                return db.Booking.Where(x => x.RideId == rideId).ToList().MapCollectionTo<Concerns.Booking, Booking>();
+            }
         }
 
         public bool ApproveBooking(Ride ride, Booking booking)
@@ -99,9 +111,12 @@ namespace CarPooling.Providers
             int noOfSeats = rideService.CheckAvailableSeats(ride, booking.From, booking.To, booking.NoOfPersons);
             if (noOfSeats >= booking.NoOfPersons)
             {
-                Concerns.Booking _booking = booking.MapTo<Concerns.Booking>();
-                int index=DataStore.bookings.FindIndex(x=>x.Id ==_booking.Id);
-                DataStore.bookings[index].Status="Approved";
+                using (var db = new Concerns.CarPoolingDbContext())
+                {
+                    Concerns.Booking _booking = db.Booking.Find(booking.Id);
+                    _booking.Status = "Approved";
+                    db.SaveChanges();
+                }
                 return true;
             }
             else
@@ -110,9 +125,12 @@ namespace CarPooling.Providers
 
         public void RejectBooking(Booking booking)
         {
-            Concerns.Booking _booking = booking.MapTo<Concerns.Booking>();
-            int index = DataStore.bookings.FindIndex(x => x.Id == _booking.Id);
-            DataStore.bookings[index].Status = "Rejected";
+            using (var db = new Concerns.CarPoolingDbContext())
+            {
+                Concerns.Booking _booking = db.Booking.Find(booking.Id);
+                _booking.Status = "Rejected";
+                db.SaveChanges();
+            }
         }
     }
 }

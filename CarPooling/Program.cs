@@ -8,6 +8,7 @@ using System.Reflection;
 using System.Linq;
 using AutoMapper;
 
+
 namespace CarPooling
 {
     class Program
@@ -20,13 +21,14 @@ namespace CarPooling
         static void Main(string[] args)
         {
             Program program = new Program();
+            Concerns.CarPoolingDbContext context = new Concerns.CarPoolingDbContext();
             ConfigureProfiles();
             do
             {
                 program.InitialSelection();
             } while (true);
         }
-        
+
         public static void ConfigureProfiles()
         {
             Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies()
@@ -261,18 +263,33 @@ namespace CarPooling
             }
             Console.WriteLine("Do you want to enter via points? If yes type 'y' else press any key");
             string choise = InputHandler.GetString();
-            List<string> viaPoints = new List<string>();
-            List<int> distances = new List<int>();
+            List<Location> locations = new List<Location>();
+            Ride ride = new Ride
+            {
+                From = from,
+                To = to,
+                Date = date,
+                Time = date,
+                EndDate = endDate,
+                Price = price,
+                Distance = distance,
+                NoOfVacentSeats = noOfVacantSeats,
+                UserId = user.Id,
+                Type = BookingType.ManualApproval,
+                Id = user.Id + from + to + date.Date.ToString("d"),
+                VehicleId = vehicle.Id
+            };
             if (choise == "y")
             {
                 string viaPoint;
                 int previousDist = 0, dist;
                 do
                 {
+                    Location location = new Location();
                     Console.WriteLine("Enter via point or type enter to exit:");
                     viaPoint = InputHandler.GetString();
                     if (viaPoint == "") break;
-                    viaPoints.Add(viaPoint);
+                    location.LocationName = viaPoint;
                     Console.WriteLine("Enter distance from source to via point in KMs:");
                     do
                     {
@@ -283,27 +300,14 @@ namespace CarPooling
                         }
                     } while (dist <= previousDist);
                     previousDist = dist;
-                    distances.Add(dist);
-                } while (viaPoints.Count < 8);
+                    location.Distance = distance;
+                    location.Id = ride.Id;
+                    locations.Add(location);
+                } while (locations.Count < 8);
             }
-            Ride ride = new Ride
-            {
-                From = from,
-                To = to,
-                Date = date,
-                Time = date,
-                EndDate = endDate,
-                Price = price,
-                Distance = distance,
-                Distances = distances,
-                NoOfVacentSeats = noOfVacantSeats,
-                UserId = user.Id,
-                Type = BookingType.ManualApproval,
-                Id = user.Id + from + to + date.Date.ToString("d"),
-                ViaPoints = viaPoints,
-                VehicleId = vehicle.Id
-            };
             rideService.OfferRide(ride);
+            ILocationService locationService = new LocationService();
+            locationService.AddLocations(locations);
             Console.WriteLine("Ride added successfully");
         }
 
@@ -336,6 +340,8 @@ namespace CarPooling
         {
             IRideService rideService = new RideService();
             IVehicleService vehicleService = new VehicleService();
+            ILocationService locationService = new LocationService();
+            IBookingService bookingService = new BookingService();
             List<Ride> rides = rideService.GetRides(user.Id);
             if (rides.Count > 0)
             {
@@ -346,6 +352,8 @@ namespace CarPooling
                 foreach (Ride ride in rides)
                 {
                     Vehicle vehicle = vehicleService.GetVehicle(ride.VehicleId);
+                    ride.Locations=locationService.GetLocations(ride.UserId);
+                    ride.Bookings=bookingService.GetRideBookings(ride.UserId);
                     double price = rideService.GetPrice(ride.From, ride.To, ride);
                     rideService.ChangeRideStatus(ride);
                     Console.WriteLine(i + "\t|" + ride.From + "\t|" + ride.To + "\t|" + ride.Date + "\t|" + price + "\t|" + vehicle.Model + "\t\t|" + vehicle.CarNumber + "\t\t|" + ride.Status);
@@ -420,6 +428,22 @@ namespace CarPooling
                         num = InputHandler.GetInt();
                     } while (num > rides.Count || num <= 0);
                     Ride ride = rides[num - 1];
+                    if (ride.UserId == user.Id)
+                    {
+                        Console.WriteLine("Yu can not book your ride");
+                        return;
+                    }
+                    BookingStatus status;
+                    if (ride.Type == BookingType.AutoApproval)
+                    {
+
+                        status = BookingStatus.Approved;
+                    }
+                    else
+                    {
+                        status = BookingStatus.Pending;
+                    }
+
                     Booking booking = new Booking()
                     {
                         Id = ride.Id + user.Name + DateTime.Now,
@@ -430,7 +454,8 @@ namespace CarPooling
                         Time = ride.Date,
                         NoOfPersons = noOfPassengers,
                         RideId = ride.Id,
-                        Price = price
+                        Price = price,
+                        Status = status
                     };
                     BookACar(ride, booking);
                 }
@@ -441,14 +466,9 @@ namespace CarPooling
         {
             IBookingService bookingService = new BookingService();
 
-            if (bookingService.AddBooking(ride, booking))
+            if (bookingService.AddBooking(booking))
             {
                 Console.WriteLine("Waiting for approval");
-            }
-            else
-            {
-                Console.WriteLine("You can not book your ride");
-                ViewRide(ride);
             }
         }
 
@@ -504,7 +524,11 @@ namespace CarPooling
                         break;
                     case 2:
                         if (rideService.CancelRide(ride))
+                        {
                             Console.WriteLine("Cancelled successfully");
+                            IBookingService bookingService = new BookingService();
+                            bookingService.CancelAllRideBookings(ride.Id);
+                        }
                         else
                             Console.WriteLine("Ride cannot be cancelled");
                         break;
@@ -598,6 +622,10 @@ namespace CarPooling
         {
             IRideService rideService = new RideService();
             Ride ride = rideService.GetRide(booking.RideId);
+            ILocationService locationService = new LocationService();
+            ride.Locations = locationService.GetLocations(ride.Id);
+            IBookingService bookingService = new BookingService();
+            ride.Bookings = bookingService.GetRideBookings(ride.Id);
             if (ride.Status == RideStatus.Cancelled)
             {
                 Console.WriteLine("Ride Cancelled");
@@ -615,7 +643,6 @@ namespace CarPooling
             }
             Console.WriteLine("Select One: \n1. Modify Booking \n2. Cancel Booking \nPress any another number to go to next booking.");
             int choise;
-            IBookingService bookingService = new BookingService();
             do
             {
                 choise = InputHandler.GetInt();

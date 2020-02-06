@@ -2,8 +2,10 @@
 using CarPooling.Contracts;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Carpooling.DataStore;
+using Microsoft.EntityFrameworkCore;
 
 namespace CarPooling.Providers
 {
@@ -11,63 +13,43 @@ namespace CarPooling.Providers
     {
         public void OfferRide(Ride ride)
         {
-            Concerns.Ride _ride = ride.MapTo<Concerns.Ride>();
-            DataStore.rides.Add(_ride);
-            for (int i = 0; i < ride.ViaPoints.Count; i++)
+            using (var db = new Concerns.CarPoolingDbContext())
             {
-                Concerns.Location location = new Concerns.Location();
-                location.Id = ride.Id + ride.ViaPoints[i];
-                location.LocationName = ride.ViaPoints[i];
-                location.Distance = ride.Distances[i];
-                location.RideId = ride.Id;
-                DataStore.locations.Add(location);
+                db.Add(ride.MapTo<Concerns.Ride>());
+                db.SaveChanges();
             }
         }
 
         public List<Ride> GetRides(string userId)
         {
-            List<Concerns.Ride> _rides = DataStore.rides.FindAll(ride => ride.UserId == userId);
-            List<Ride> rides = _rides.MapCollectionTo<Concerns.Ride, Ride>();
-            foreach (Ride ride in rides)
+            List<Concerns.Ride> rides;
+            using (var db = new Concerns.CarPoolingDbContext())
             {
-                List<Concerns.Location> locations = DataStore.locations.FindAll(location => location.RideId == ride.Id);
-                ride.ViaPoints = new List<string>();
-                ride.Distances = new List<int>();
-                IBookingService bookingService = new BookingService();
-                ride.Bookings = bookingService.GetRideBookings(ride.Id);
-                foreach (Concerns.Location location in locations)
-                {
-                    ride.ViaPoints.Add(location.LocationName);
-                    ride.Distances.Add(location.Distance);
-                }
+                rides = db.Ride.Where(x => x.UserId == userId).ToList();
             }
-            return rides;
+            return rides.MapCollectionTo<Concerns.Ride, Ride>();   
         }
 
         public Ride GetRide(string rideId)
         {
-            Concerns.Ride _ride = DataStore.rides.Find(x => x.Id == rideId);
-            Ride ride = _ride.MapTo<Ride>();
-            List<Concerns.Location> locations = DataStore.locations.FindAll(location => location.RideId == ride.Id);
-            ride.ViaPoints = new List<string>();
-            ride.Distances = new List<int>();
-            IBookingService bookingService = new BookingService();
-            ride.Bookings = bookingService.GetRideBookings(rideId);
-            foreach (Concerns.Location location in locations)
+            Concerns.Ride ride;
+            using(var db = new Concerns.CarPoolingDbContext())
             {
-                ride.ViaPoints.Add(location.LocationName);
-                ride.Distances.Add(location.Distance);
+                ride = db.Ride.Find(rideId);
             }
-            return ride;
+            return ride.MapTo<Ride>();
         }
 
         public bool ModifyRide(Ride ride, int value)
         {
             if (ride.Status != RideStatus.NotYetStarted)
                 return false;
-            Concerns.Ride _ride = ride.MapTo<Concerns.Ride>();
-            int index = DataStore.rides.FindIndex(x => x.Id == _ride.Id);
-            DataStore.rides[index].NoOfVacentSeats = value;
+            using (var db = new Concerns.CarPoolingDbContext())
+            {
+                Concerns.Ride _ride = db.Ride.Find(ride.Id);
+                _ride.NoOfVacentSeats = value;
+                db.SaveChanges();
+            }
             return true;
         }
 
@@ -75,11 +57,12 @@ namespace CarPooling.Providers
         {
             if (ride.Status != RideStatus.NotYetStarted)
                 return false;
-            Concerns.Ride _ride = ride.MapTo<Concerns.Ride>();
-            int index = DataStore.rides.FindIndex(x => x.Id == _ride.Id);
-            DataStore.rides[index].Status = "Cancelled";
-            IBookingService bookingService = new BookingService();
-            bookingService.CancelAllRideBookings(ride.Id);
+            using (var db = new Concerns.CarPoolingDbContext())
+            {
+                Concerns.Ride _ride = db.Ride.Find(ride.Id);
+                _ride.Status = "Cancelled";
+                db.SaveChanges();
+            }
             return true;
         }
 
@@ -87,18 +70,22 @@ namespace CarPooling.Providers
         {
             if (ride.Date < DateTime.Now && ride.Status == RideStatus.NotYetStarted)
             {
-                Concerns.Ride _ride = ride.MapTo<Concerns.Ride>();
-                int index = DataStore.rides.FindIndex(x => x.Id == _ride.Id);
-                DataStore.rides[index].Status = "Completed";
+                using (var db = new Concerns.CarPoolingDbContext())
+                {
+                    Concerns.Ride _ride = db.Ride.Find(ride.Id);
+                    _ride.Status = "Completed";
+                    db.SaveChanges();
+                }
             }
         }
 
         public double GetPrice(string pickUp, string drop, Ride ride)
         {
-            List<string> viaPoints = new List<string>(ride.ViaPoints);
+            List<Location> locations = new List<Location>(ride.Locations);
+            List<string> viaPoints = locations.Select(obj => obj.LocationName).ToList();
+            List<int> distances = locations.Select(obj => obj.Distance).ToList();
             viaPoints.Insert(0, ride.From);
             viaPoints.Add(ride.To);
-            List<int> distances = new List<int>(ride.Distances);
             distances.Insert(0, 0);
             distances.Add(ride.Distance);
             int indexOfSource = viaPoints.IndexOf(pickUp);
@@ -109,27 +96,26 @@ namespace CarPooling.Providers
         public List<Ride> FindRide(string source, string destination, DateTime date, int noOfPassengers)
         {
             List<Ride> availableRides = new List<Ride>();
-            List<Ride> rides = DataStore.rides.MapCollectionTo<Concerns.Ride, Ride>();
-            foreach (Ride ride in rides)
+            List<Ride> rides;
+            using (var db = new Concerns.CarPoolingDbContext())
             {
-                List<Concerns.Location> locations = DataStore.locations.FindAll(location => location.RideId == ride.Id);
-                ride.ViaPoints = new List<string>();
-                ride.Distances = new List<int>();
-                foreach (Concerns.Location location in locations)
-                {
-                    ride.ViaPoints.Add(location.LocationName);
-                    ride.Distances.Add(location.Distance);
-                }
+                rides = db.Ride.ToList().MapCollectionTo<Concerns.Ride, Ride>();
             }
             foreach (Ride ride in rides)
             {
-                List<string> viaPoints = new List<string>(ride.ViaPoints);
+                ILocationService locationService = new LocationService();
+                ride.Locations=locationService.GetLocations(ride.Id);
+                IBookingService bookingService = new BookingService();
+                ride.Bookings = bookingService.GetRideBookings(ride.Id);
+            }
+            foreach (Ride ride in rides)
+            {
+                List<string> viaPoints = new List<string>(ride.Locations.Select(obj=> obj.LocationName).ToList());
                 viaPoints.Insert(0, ride.From);
                 viaPoints.Add(ride.To);
                 int indexOfSource = viaPoints.IndexOf(source);
                 int indexOfDestination = viaPoints.IndexOf(destination);
-                IRideService rideService = new RideService();
-                int noOfSeats = rideService.CheckAvailableSeats(ride, source, destination, noOfPassengers);
+                int noOfSeats = CheckAvailableSeats(ride, source, destination, noOfPassengers);
                 if (ride.Date.Date == date.Date && ride.Date.TimeOfDay >= date.TimeOfDay && noOfSeats >= noOfPassengers && ride.Status == RideStatus.NotYetStarted)
                 {
                     if (indexOfSource == -1 || indexOfDestination == -1)
@@ -146,7 +132,7 @@ namespace CarPooling.Providers
         public int CheckAvailableSeats(Ride ride, string pickUp, string drop, int noOfPassengers)
         {
             int noOfSeats = ride.NoOfVacentSeats;
-            List<string> viaPoints = new List<string>(ride.ViaPoints);
+            List<string> viaPoints = new List<string>(ride.Locations.Select(obj => obj.LocationName).ToList());
             viaPoints.Insert(0, ride.From);
             viaPoints.Add(ride.To);
             int indexOfSource = viaPoints.IndexOf(pickUp);

@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace CarPooling
+namespace CarPooling.Concerns
 {
     public class CarPoolingDbContext : DbContext
     {
