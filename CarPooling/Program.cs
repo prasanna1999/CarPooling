@@ -26,7 +26,7 @@ namespace CarPooling
                 program.InitialSelection();
             } while (true);
         }
-
+        
         public static void ConfigureProfiles()
         {
             Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies()
