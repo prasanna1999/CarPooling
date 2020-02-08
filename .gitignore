@@ -16,3 +16,5 @@
 /Carpooling.Web/.vs/Carpooling.Web/v15/.suo
 /Carpooling.DataStore/bin/Debug/netstandard2.0
 /Carpooling.DataStore/obj
+/CarPooling.WebApi/bin/Debug/netcoreapp3.1
+/CarPooling.WebApi/obj
