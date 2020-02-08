@@ -13,11 +13,11 @@ namespace CarPooling.Contracts
 
         void OfferRide(Ride ride);
 
-        bool ModifyRide(Ride ride, int value);
+        bool ModifyRide(string rideId, int value);
 
-        bool CancelRide(Ride ride);
+        bool CancelRide(string rideId);
 
-        void ChangeRideStatus(Ride ride);
+        void ChangeRideStatus(string rideId);
 
         Ride GetRide(string rideId);
 

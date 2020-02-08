@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28010.2036
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29728.190
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarPooling", "CarPooling\CarPooling.csproj", "{5DA9D868-6083-4BC4-A37E-690435917E08}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -16,7 +16,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarPooling.DataModels", "Ca
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Carpooling.DataStore", "Carpooling.DataStore\Carpooling.DataStore.csproj", "{C6FC80AC-BAC0-4EEE-B09D-A4AB41A7B06D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarPooling.Concerns", "CarPooling.Concerns\CarPooling.Concerns.csproj", "{BC1B184E-83D0-48FE-B1F0-425BA4A9023C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarPooling.Concerns", "CarPooling.Concerns\CarPooling.Concerns.csproj", "{BC1B184E-83D0-48FE-B1F0-425BA4A9023C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarPooling.WebApi", "CarPooling.WebApi\CarPooling.WebApi.csproj", "{B2B9538B-2538-409B-953F-F6F0DBF49CBB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -48,6 +50,10 @@ Global
 		{BC1B184E-83D0-48FE-B1F0-425BA4A9023C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BC1B184E-83D0-48FE-B1F0-425BA4A9023C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BC1B184E-83D0-48FE-B1F0-425BA4A9023C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B2B9538B-2538-409B-953F-F6F0DBF49CBB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B2B9538B-2538-409B-953F-F6F0DBF49CBB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B2B9538B-2538-409B-953F-F6F0DBF49CBB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B2B9538B-2538-409B-953F-F6F0DBF49CBB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
