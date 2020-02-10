@@ -23,7 +23,7 @@ namespace CarPooling.DataModels
 
         public string To { get; set; }
 
-        public double Price { get; set; }
+        public int Price { get; set; }
 
         public int Distance { get; set; }
 

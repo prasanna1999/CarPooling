@@ -199,8 +199,7 @@ namespace CarPooling
         {
             IRideService rideService = new RideService();
             string from, to;
-            double price;
-            int noOfVacantSeats, distance;
+            int noOfVacantSeats, distance, price;
             DateTime date, endDate;
             Console.WriteLine("Enter your source:");
             do
@@ -225,7 +224,7 @@ namespace CarPooling
             Console.WriteLine("Enter distance from source to destination in Kms");
             distance = InputHandler.GetInt();
             Console.WriteLine("Enter price per KM");
-            price = InputHandler.GetDouble();
+            price = InputHandler.GetInt();
             Console.WriteLine("Enter number of vacant seats");
             do
             {
@@ -276,7 +275,7 @@ namespace CarPooling
                 NoOfVacentSeats = noOfVacantSeats,
                 UserId = user.Id,
                 Type = BookingType.ManualApproval,
-                Id = user.Id + from + to + date.Date.ToString("d"),
+                Id = user.Id + from + to + date.Date.ToString("yyyyMMdd"),
                 VehicleId = vehicle.Id
             };
             if (choise == "y")
@@ -357,7 +356,10 @@ namespace CarPooling
                     ride.Bookings = bookingService.GetRideBookings(ride.Id);
                     double price = rideService.GetPrice(ride.From, ride.To, ride);
                     if (ride.Date < DateTime.Now && ride.Status == RideStatus.NotYetStarted)
-                        rideService.ChangeRideStatus(ride.Id);
+                    {
+                        ride.Status = RideStatus.Completed;
+                        rideService.ModifyRide(ride.Id, ride);
+                    }
                     Console.WriteLine(i + "\t|" + ride.From + "\t|" + ride.To + "\t|" + ride.Date + "\t|" + price + "\t|" + vehicle.Model + "\t\t|" + vehicle.CarNumber + "\t\t|" + ride.Status);
                     i++;
                 }
@@ -382,7 +384,7 @@ namespace CarPooling
             string source, destination;
             DateTime date;
             int noOfPassengers;
-            double price = 0;
+            int price = 0;
             Console.WriteLine("Enter pick up point:");
             do
             {
@@ -448,7 +450,7 @@ namespace CarPooling
 
                     Booking booking = new Booking()
                     {
-                        Id = ride.Id + user.Name + DateTime.Now,
+                        Id = ride.Id + user.Name + DateTime.Now.ToString("yyyyMMddhhmm"),
                         UserId = user.Id,
                         From = source,
                         To = destination,
@@ -526,8 +528,12 @@ namespace CarPooling
                         break;
                     case 2:
                         if (ride.Status != RideStatus.NotYetStarted)
+                        {
                             Console.WriteLine("Ride cannot be cancelled");
-                        if (rideService.CancelRide(ride.Id))
+                            return;
+                        }
+                        ride.Status = RideStatus.Cancelled;
+                        if (rideService.ModifyRide(ride.Id,ride))
                         {
                             Console.WriteLine("Cancelled successfully");
                             IBookingService bookingService = new BookingService();
@@ -556,8 +562,12 @@ namespace CarPooling
             Console.WriteLine("Enter Changed Value");
             int value = InputHandler.GetInt();
             if (ride.Status != RideStatus.NotYetStarted)
+            {
                 Console.WriteLine("Ride cannot be modified");
-            if (rideService.ModifyRide(ride.Id, value))
+                return;
+            }
+            ride.NoOfVacentSeats = value;
+            if (rideService.ModifyRide(ride.Id, ride))
             {
                 Console.WriteLine("Modified successfully");
             }
@@ -596,17 +606,20 @@ namespace CarPooling
                         case 1:
                             IRideService rideService = new RideService();
                             int noOfSeats = rideService.CheckAvailableSeats(ride, booking.From, booking.To, booking.NoOfPersons);
-                            if (noOfSeats >= booking.NoOfPersons)
+                            if (noOfSeats < booking.NoOfPersons)
                             {
                                 Console.WriteLine("Number of vacant seats are less than the requirement");
+                                return;
                             }
-                            if (bookingService.ApproveBooking(booking.Id))
+                            booking.Status = BookingStatus.Approved;
+                            if (bookingService.ChangeBooking(booking.Id,booking))
                             {
                                 Console.WriteLine("Approved Booking");
                             }
                             break;
                         case 2:
-                            bookingService.RejectBooking(booking.Id);
+                            booking.Status = BookingStatus.Rejected;
+                            bookingService.ChangeBooking(booking.Id,booking);
                             Console.WriteLine("Rejected Booking");
                             break;
                         default:
@@ -657,7 +670,28 @@ namespace CarPooling
                         {
                             Console.WriteLine("Enter number of persons");
                             int noOfPersons = InputHandler.GetInt();
-                            if (bookingService.ModifyBooking(booking, noOfPersons, ride))
+                            int noOfSeats = rideService.CheckAvailableSeats(ride, booking.From, booking.To, booking.NoOfPersons);
+                            if (noOfSeats + booking.NoOfPersons >= noOfPersons && booking.Status == BookingStatus.Approved)
+                            {
+                                if (ride.Type == BookingType.AutoApproval)
+                                {
+                                    booking.Status = BookingStatus.Approved;
+                                }
+                                else
+                                {
+                                    booking.Status = BookingStatus.Pending;
+                                }
+                                booking.NoOfPersons = noOfPersons;
+                            }
+                            else if (booking.Status == BookingStatus.Pending)
+                            {
+                                if (noOfSeats >= noOfPersons)
+                                {
+                                    booking.Status = BookingStatus.Pending;
+                                    booking.NoOfPersons = noOfPersons;
+                                }
+                            }
+                            if (bookingService.ChangeBooking(booking.Id, booking))
                             {
                                 Console.WriteLine("Updated succesfully");
                             }
@@ -672,7 +706,8 @@ namespace CarPooling
                         {
                             Console.WriteLine("Booking already cancelled");
                         }
-                        if (bookingService.CancelBooking(booking.Id))
+                        booking.Status = BookingStatus.Cancelled;
+                        if (bookingService.ChangeBooking(booking.Id,booking))
                         {
                             Console.WriteLine("Cancelled successfully");
                         }

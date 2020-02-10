@@ -37,16 +37,12 @@ namespace CarPooling.WebApi.Controllers
             rideService.OfferRide(ride);
         }
 
-        // PUT: api/Ride/5
+
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public void Put(string id, [FromBody] Ride ride)
         {
+            rideService.ModifyRide(id, ride);
         }
 
-        // DELETE: api/ApiWithActions/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-        }
     }
 }
