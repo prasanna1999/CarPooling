@@ -9,15 +9,11 @@ namespace CarPooling.Contracts
     {
         List<Ride> GetRides(string userId);
 
-        double GetPrice(string pickUp, string drop, Ride ride);
+        int GetPrice(string pickUp, string drop, Ride ride);
 
         void OfferRide(Ride ride);
 
-        bool ModifyRide(string rideId, int value);
-
-        bool CancelRide(string rideId);
-
-        void ChangeRideStatus(string rideId);
+        bool ModifyRide(string rideId, Ride value);
 
         Ride GetRide(string rideId);
 

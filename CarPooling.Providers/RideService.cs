@@ -3,9 +3,6 @@ using CarPooling.Contracts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Carpooling.DataStore;
-using Microsoft.EntityFrameworkCore;
 
 namespace CarPooling.Providers
 {
@@ -33,30 +30,17 @@ namespace CarPooling.Providers
             return db.Ride.Find(rideId).MapTo<Ride>();
         }
 
-        public bool ModifyRide(string rideId, int value)
+        public bool ModifyRide(string rideId, Ride ride)
         {
-            Concerns.Ride _ride = db.Ride.Find(rideId);
-            _ride.NoOfVacentSeats = value;
+            Concerns.Ride dbRide = db.Ride.Find(rideId);
+            Concerns.Ride ride1 = ride.MapTo<Concerns.Ride>();
+            dbRide.Status = ride1.Status;
+            dbRide.NoOfVacentSeats = ride1.NoOfVacentSeats;
             db.SaveChanges();
             return true;
         }
 
-        public bool CancelRide(string rideId)
-        {
-            Concerns.Ride _ride = db.Ride.Find(rideId);
-            _ride.Status = "Cancelled";
-            db.SaveChanges();
-            return true;
-        }
-
-        public void ChangeRideStatus(string rideId)
-        {
-            Concerns.Ride _ride = db.Ride.Find(rideId);
-            _ride.Status = "Completed";
-            db.SaveChanges();
-        }
-
-        public double GetPrice(string pickUp, string drop, Ride ride)
+        public int GetPrice(string pickUp, string drop, Ride ride)
         {
             List<Location> locations = new List<Location>(ride.Locations);
             List<string> viaPoints = locations.Select(obj => obj.LocationName).ToList();

@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using CarPooling.Contracts;
 using CarPooling.DataModels;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CarPooling.WebApi.Controllers
@@ -39,17 +35,11 @@ namespace CarPooling.WebApi.Controllers
             return bookingService.AddBooking(booking);
         }
 
-        // PUT: api/Booking/5
         [HttpPut("{id}")]
-        public void Put(string id)
+        public void Put(string id, [FromBody] Booking booking)
         {
-            bookingService.CancelBooking(id);
+            bookingService.ChangeBooking(id,booking);
         }
 
-        // DELETE: api/ApiWithActions/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-        }
     }
 }

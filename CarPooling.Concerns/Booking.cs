@@ -32,7 +32,7 @@ namespace CarPooling.Concerns
         public DateTime Time { get; set; }
 
         [Required]
-        public double Price { get; set; }
+        public int Price { get; set; }
 
         [Required]
         public int NoOfPersons { get; set; }

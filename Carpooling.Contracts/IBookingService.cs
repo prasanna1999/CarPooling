@@ -13,14 +13,9 @@ namespace CarPooling.Contracts
 
         void CancelAllRideBookings(string rideId);
 
-        bool CancelBooking(string id);
-
-        bool ModifyBooking(Booking booking, int noOfPersons, Ride ride);
+        bool ChangeBooking(string id, Booking booking);
 
         List<Booking> GetRideBookings(string rideId);
 
-        bool ApproveBooking(string bookingId);
-
-        void RejectBooking(string bookingId);
     }
 }
