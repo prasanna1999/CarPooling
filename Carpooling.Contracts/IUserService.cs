@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace CarPooling.Contracts
 {
@@ -10,5 +11,7 @@ namespace CarPooling.Contracts
         void AddUser(User user);
 
         User GetUser(string email);
+
+        Task<User> Authenticate(string username, string password);
     }
 }

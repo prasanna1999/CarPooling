@@ -24,6 +24,8 @@ namespace CarPooling.DataModels
 
         public string Password { get; set; }
 
+        public string Role { get; set; }
+
         public List<Ride> Rides { get; set; }
 
         public List<Booking> Bookings { get; set; }

@@ -4,12 +4,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using CarPooling.Contracts;
 using CarPooling.DataModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CarPooling.WebApi.Controllers
 {
     [Route("api/[controller]")]
+    [Authorize(AuthenticationSchemes = "BasicAuthentication",Roles ="User")]
     [ApiController]
     public class UserController : ControllerBase
     {
@@ -19,13 +21,15 @@ namespace CarPooling.WebApi.Controllers
         {
             this.userService = userService;
         }
-
+        
         [HttpGet("{id}")]
         public User Get(string id)
         {
             return userService.GetUser(id);
         }
 
+        
+        [AllowAnonymous]
         // POST api/values
         [HttpPost]
         public void Post(User user)
