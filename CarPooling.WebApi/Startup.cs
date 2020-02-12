@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using CarPooling.Contracts;
 using CarPooling.Providers;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -38,6 +39,9 @@ namespace CarPooling.WebApi
             Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies()
                 .Where(x => x.FullName.ToLowerInvariant().StartsWith("CarPooling")).ToArray();
             Mapper.Initialize(cfg => { cfg.AddMaps(assemblies); cfg.ValidateInlineMaps = false; });
+            services.AddAuthentication("BasicAuthentication")
+                .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -47,6 +51,11 @@ namespace CarPooling.WebApi
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseCors(x => x
+                .AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader());
 
             app.UseHttpsRedirection();
 

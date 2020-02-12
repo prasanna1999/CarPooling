@@ -1,11 +1,13 @@
 ﻿using System.Collections.Generic;
 using CarPooling.Contracts;
 using CarPooling.DataModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CarPooling.WebApi.Controllers
 {
     [Route("api/[controller]")]
+    [Authorize(AuthenticationSchemes = "BasicAuthentication")]
     [ApiController]
     public class BookingController : ControllerBase
     {
